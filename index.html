@@ -523,6 +523,63 @@
     font-family: 'Source Serif 4', serif;
   }
 
+  .books-grid-real {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .book-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .book-cover-wrap {
+    position: relative;
+    width: 100%;
+    padding-bottom: 148%;
+    box-shadow: 4px 8px 20px rgba(0,0,0,0.5);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .book-slot:hover .book-cover-wrap {
+    transform: translateY(-8px) rotate(-1.5deg);
+    box-shadow: 6px 14px 28px rgba(0,0,0,0.6);
+  }
+  .book-cover-wrap img {
+    position: absolute;
+    inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .book-cover-fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 10px;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+    line-height: 1.5;
+  }
+  .book-slot-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #EDE7DC;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .book-slot-author {
+    font-size: 9px;
+    color: rgba(159,191,159,0.65);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+
   /* ── CONTACT ── */
   .panel-contact {
     background: var(--ink);
@@ -686,16 +743,84 @@
     color: var(--muted);
   }
 
+  /* CENTERING */
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  nav {
+    max-width: 1200px;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .scroll-container {
+    width: 100%;
+    max-width: 1200px;
+  }
+  .progress-dots {
+    right: max(28px, calc(50% - 600px + 28px));
+  }
+  .essay-page {
+    width: 100%;
+    max-width: 1200px;
+  }
+
   /* MOBILE */
   @media (max-width: 768px) {
-    nav { padding: 18px 24px; }
-    .panel { padding: 0 24px; }
-    .hero-inner { grid-template-columns: 1fr; padding-top: 90px; }
+    nav {
+      padding: 16px 20px;
+      transform: none;
+      left: 0;
+    }
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 8px; }
+    .panel { padding: 0 20px; }
+    .hero-inner {
+      grid-template-columns: 1fr;
+      padding-top: 80px;
+      gap: 0;
+    }
     .hero-right { display: none; }
-    .about-inner { grid-template-columns: 1fr; gap: 32px; padding-top: 90px; }
+    .hero-name { font-size: clamp(52px, 14vw, 72px); }
+    .hero-tagline { font-size: 13px; max-width: 100%; }
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding-top: 80px;
+    }
+    .about-big { font-size: clamp(32px, 9vw, 48px); }
+    .writing-big { font-size: clamp(36px, 10vw, 56px); }
+    .int-big { font-size: clamp(32px, 9vw, 48px); }
+    .int-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .icard { padding: 12px; }
+    .icard-title { font-size: 12px; }
+    .icard-desc { font-size: 10px; }
+    .books-grid-real { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .book-slot-name { font-size: 10px; }
+    .contact-big { font-size: clamp(40px, 12vw, 72px); }
+    .progress-dots { right: 12px; }
+    .essay-page { padding: 80px 20px 60px; }
+    .essay-header-title { font-size: clamp(24px, 6vw, 36px); }
+    .essay-body { font-size: 15px; }
+    .ecard { grid-template-columns: 28px 1fr 20px; gap: 10px; }
+    .e-title { font-size: 17px; }
+    .interests-inner { gap: 20px; }
+    .books-section { margin-top: 0; }
+  }
+
+  @media (max-width: 480px) {
     .int-grid { grid-template-columns: 1fr 1fr; }
-    .progress-dots { right: 14px; }
-    .essay-page { padding: 80px 24px 60px; }
+    .hero-name { font-size: clamp(44px, 13vw, 60px); }
+    .nav-links a { display: none; }
+    .nav-links a:last-child { display: block; }
+  }
+
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
   }
 </style>
 </head>
@@ -747,7 +872,12 @@
       </div>
       <div class="hero-right">
         <div class="photo-frame">
+          <!-- 
+            INSTRUÇÃO: Substitua o bloco abaixo pela sua foto.
+            Salve sua foto como "photo.jpg" na mesma pasta que este arquivo,
+            depois substitua o bloco pela linha:
             <img src="photo.jpg" alt="Vinicius de Oliveira Bastos">
+          -->
           <div class="photo-placeholder">
             <div class="photo-placeholder-initials">VB</div>
             <div class="photo-placeholder-hint">Adicione sua foto:<br>salve como photo.jpg<br>na mesma pasta</div>
@@ -848,20 +978,7 @@
       </div>
       <div class="books-section">
         <span class="books-label">On my shelf</span>
-        <div class="books-row">
-          <div class="book-item">
-            <div class="bc b1">The Screwtape Letters</div>
-            <div class="bname">C.S. Lewis</div>
-          </div>
-          <div class="book-item">
-            <div class="bc b2">Debating Calvinism</div>
-            <div class="bname">Hunt & White</div>
-          </div>
-          <div class="book-item">
-            <div class="bc b3">The Reason for God</div>
-            <div class="bname">T. Keller</div>
-          </div>
-        </div>
+        <div class="books-grid-real" id="booksGrid"></div>
       </div>
     </div>
   </section>
@@ -941,23 +1058,25 @@
 </div>
 
 <script>
-  // Custom cursor
+  // Custom cursor — desktop only
+  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-  });
-  function animRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
+  if (!isTouch) {
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+    (function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
   }
-  animRing();
 
   // Hero parallax
   const p1 = document.getElementById('hero');
@@ -1026,6 +1145,55 @@
       }
     });
   });
+
+  // Bookshelf
+  const books = [
+    {
+      title: "The Screwtape Letters",
+      author: "C.S. Lewis",
+      isbn: "9780060652937",
+      goodreads: "https://www.goodreads.com/book/show/8130.The_Screwtape_Letters",
+      fallbackBg: "#2C1810", fallbackColor: "#D4A574"
+    },
+    {
+      title: "Debating Calvinism",
+      author: "Dave Hunt & James White",
+      isbn: "9781590522738",
+      goodreads: "https://www.goodreads.com/book/show/62792.Debating_Calvinism",
+      fallbackBg: "#1A2535", fallbackColor: "#C49A3C"
+    },
+    {
+      title: "The Reason for God",
+      author: "Timothy Keller",
+      isbn: "9780525950493",
+      goodreads: "https://www.goodreads.com/book/show/1858013.The_Reason_for_God",
+      fallbackBg: "#1C3040", fallbackColor: "#9FD4BA"
+    }
+  ];
+
+  (function renderBooks() {
+    const grid = document.getElementById('booksGrid');
+    if (!grid) return;
+    books.forEach(b => {
+      const coverUrl = `https://covers.openlibrary.org/b/isbn/${b.isbn}-L.jpg`;
+      const a = document.createElement('a');
+      a.className = 'book-slot';
+      a.href = b.goodreads;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = `
+        <div class="book-cover-wrap">
+          <img src="${coverUrl}" alt="${b.title}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="book-cover-fallback"
+               style="background:${b.fallbackBg};color:${b.fallbackColor};">${b.title}</div>
+        </div>
+        <div class="book-slot-name">${b.title}</div>
+        <div class="book-slot-author">${b.author}</div>
+      `;
+      grid.appendChild(a);
+    });
+  })();
 
   // Essay show/hide
   const mainSite = document.getElementById('mainSite');
