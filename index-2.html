@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinicius de Oliveira Bastos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F4EFE6;
+    --ink: #1A1A18;
+    --green: #1B4D3E;
+    --gold: #C49A3C;
+    --muted: #7A7A72;
+    --sand: #EDE7DC;
+    --pale: #B4A882;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 8px;
+    height: 8px;
+    background: var(--ink);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.4s ease, opacity 0.3s;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 48px;
+    mix-blend-mode: multiply;
+  }
+  .nav-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+  }
+  .nav-links a {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* SCROLL CONTAINER */
+  .scroll-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  .scroll-container::-webkit-scrollbar { display: none; }
+
+  /* PANELS */
+  .panel {
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0 48px;
+    overflow: hidden;
+  }
+
+  /* ── HERO ── */
+  .panel-hero {
+    background: var(--cream);
+    justify-content: center;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 0;
+    align-items: center;
+    height: 100%;
+    padding-top: 80px;
+  }
+  .hero-left {}
+  .hero-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(64px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 0.9;
+    cursor: default;
+    user-select: none;
+  }
+  .hn-1 {
+    display: block;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hn-2 {
+    display: block;
+    font-style: italic;
+    color: var(--green);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hn-3 {
+    display: block;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+  }
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 28px;
+    max-width: 360px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-langs {
+    display: flex;
+    gap: 6px;
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.95s forwards;
+  }
+  .lp {
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border: 0.5px solid rgba(26,26,24,0.25);
+    color: var(--muted);
+    font-family: 'Source Serif 4', serif;
+  }
+  .hero-right {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-bottom: 60px;
+    opacity: 0;
+    animation: fadeIn 1s 0.6s forwards;
+  }
+  .photo-frame {
+    width: 320px;
+    height: 420px;
+    background: var(--sand);
+    border: 0.5px solid rgba(26,26,24,0.1);
+    overflow: hidden;
+    position: relative;
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--sand);
+  }
+  .photo-placeholder-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--green);
+    font-style: italic;
+  }
+  .photo-placeholder-hint {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pale);
+    text-align: center;
+    line-height: 1.6;
+    padding: 0 20px;
+  }
+  .photo-caption {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(26,26,24,0.4);
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--pale);
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+  .scroll-hint::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 0.5px;
+    background: var(--pale);
+  }
+
+  /* ── ABOUT ── */
+  .panel-about {
+    background: var(--cream);
+    justify-content: center;
+    gap: 0;
+  }
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    padding-top: 80px;
+  }
+  .about-sec-label {
+    font-size: 8px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--pale);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .about-big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 5.5vw, 64px);
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .about-big em { font-style: italic; color: var(--green); }
+  .about-p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: #3A3A36;
+    margin-bottom: 12px;
+  }
+  .about-p strong {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .about-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .atag {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--sand);
+    border: 0.5px solid rgba(26,26,24,0.08);
+    transition: background 0.2s;
+  }
+  .atag:hover { background: #E4DDD1; }
+  .atag-icon {
+    font-size: 13px;
+    color: var(--green);
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .atag-text {
+    font-size: 12px;
+    color: #4A4A46;
+    line-height: 1.5;
+  }
+  .atag-text strong {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+
+  /* ── WRITING ── */
+  .panel-writing {
+    background: var(--sand);
+    justify-content: center;
+  }
+  .writing-inner {
+    padding-top: 80px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+  }
+  .writing-big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 0.95;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .writing-big em { font-style: italic; color: var(--gold); }
+  .writing-sub {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+  .essays { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  .ecard {
+    padding: 22px 0;
+    border-bottom: 0.5px solid rgba(26,26,24,0.12);
+    display: grid;
+    grid-template-columns: 36px 1fr 24px;
+    gap: 16px;
+    align-items: start;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .ecard:first-child { border-top: 0.5px solid rgba(26,26,24,0.12); }
+  .ecard:hover { opacity: 0.7; }
+  .ecard:hover .e-arrow { transform: translateX(6px); }
+  .e-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    padding-top: 3px;
+  }
+  .e-tag {
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 5px;
+    display: block;
+  }
+  .e-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 5px;
+  }
+  .e-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .e-arrow {
+    color: var(--gold);
+    font-size: 16px;
+    padding-top: 4px;
+    transition: transform 0.25s ease;
+    display: block;
+  }
+
+  /* ── INTERESTS ── */
+  .panel-interests {
+    background: var(--green);
+    justify-content: center;
+  }
+  .interests-inner {
+    padding-top: 80px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+  }
+  .int-big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 5.5vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    color: #EDE7DC;
+  }
+  .int-big em { font-style: italic; color: var(--gold); }
+  .int-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .icard {
+    padding: 16px;
+    background: rgba(237,231,220,0.1);
+    border: 0.5px solid rgba(237,231,220,0.18);
+    transition: background 0.25s;
+  }
+  .icard:hover { background: rgba(237,231,220,0.18); }
+  .icard-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #EDE7DC;
+    margin-bottom: 5px;
+  }
+  .icard-desc {
+    font-size: 11px;
+    color: rgba(159,191,159,0.9);
+    line-height: 1.6;
+  }
+  .books-section {}
+  .books-label {
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(159,191,159,0.7);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .books-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+  }
+  .book-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: default;
+    transition: transform 0.2s;
+  }
+  .book-item:hover { transform: translateY(-4px); }
+  .bc {
+    width: 52px;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 7px;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.4;
+    padding: 6px;
+    border: 0.5px solid rgba(237,231,220,0.2);
+    position: relative;
+  }
+  .bc::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: rgba(0,0,0,0.15);
+  }
+  .bc.b1 { background: #0F3024; color: #9FD4BA; }
+  .bc.b2 { background: #2C2C2A; color: var(--gold); }
+  .bc.b3 { background: #5C1A1A; color: #F4C4C4; }
+  .bname {
+    font-size: 8px;
+    color: rgba(159,191,159,0.7);
+    text-align: center;
+    max-width: 58px;
+    line-height: 1.4;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  /* ── CONTACT ── */
+  .panel-contact {
+    background: var(--ink);
+    justify-content: center;
+  }
+  .contact-inner {
+    padding-top: 80px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+  }
+  .contact-big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 0.92;
+    cursor: default;
+    user-select: none;
+    margin-bottom: 36px;
+    transition: transform 0.1s;
+  }
+  .cb-w { display: block; color: #F4EFE6; }
+  .cb-g { display: block; font-style: italic; color: var(--green); }
+  .cb-gold { display: block; color: var(--gold); }
+  .contact-email {
+    display: inline-block;
+    font-size: 14px;
+    color: rgba(159,191,159,0.9);
+    text-decoration: none;
+    border-bottom: 0.5px solid rgba(27,77,62,0.6);
+    padding-bottom: 3px;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: 48px;
+  }
+  .contact-email:hover {
+    color: #9FD4BA;
+    border-color: #9FD4BA;
+  }
+  .contact-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
+  }
+  .cf-text {
+    font-size: 9px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.08em;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  /* SCROLL PROGRESS */
+  .progress-dots {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  .pdot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(26,26,24,0.2);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    border: none;
+    padding: 0;
+  }
+  .pdot.active {
+    background: var(--ink);
+    transform: scale(1.5);
+  }
+  .panel-interests ~ .progress-dots .pdot,
+  .panel-contact ~ .progress-dots .pdot { background: rgba(255,255,255,0.2); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ESSAY PAGES */
+  .essay-page {
+    display: none;
+    min-height: 100vh;
+    padding: 100px 48px 80px;
+    background: var(--cream);
+  }
+  .essay-page.active { display: block; }
+  .essay-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    margin-bottom: 48px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    transition: color 0.2s;
+    font-family: 'Source Serif 4', serif;
+  }
+  .essay-back:hover { color: var(--ink); }
+  .essay-back::before { content: '←'; font-size: 12px; }
+  .essay-header { margin-bottom: 48px; border-bottom: 0.5px solid rgba(26,26,24,0.12); padding-bottom: 32px; }
+  .essay-header-tag {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .essay-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .essay-header-meta {
+    font-size: 11px;
+    color: var(--pale);
+    font-style: italic;
+  }
+  .essay-body {
+    max-width: 680px;
+    font-size: 16px;
+    line-height: 1.9;
+    color: #2A2A26;
+  }
+  .essay-body p { margin-bottom: 20px; }
+  .essay-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 40px 0 16px;
+  }
+  .essay-body blockquote {
+    border-left: 2px solid var(--green);
+    padding: 12px 20px;
+    background: var(--sand);
+    margin: 28px 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .panel { padding: 0 24px; }
+    .hero-inner { grid-template-columns: 1fr; padding-top: 90px; }
+    .hero-right { display: none; }
+    .about-inner { grid-template-columns: 1fr; gap: 32px; padding-top: 90px; }
+    .int-grid { grid-template-columns: 1fr 1fr; }
+    .progress-dots { right: 14px; }
+    .essay-page { padding: 80px 24px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-name" href="#" onclick="showMain()">V. de Oliveira Bastos</a>
+  <div class="nav-links">
+    <a href="#about" onclick="showMain()">About</a>
+    <a href="#writing" onclick="showMain()">Writing</a>
+    <a href="#interests" onclick="showMain()">Interests</a>
+    <a href="#contact" onclick="showMain()">Contact</a>
+  </div>
+</nav>
+
+<!-- PROGRESS DOTS -->
+<div class="progress-dots" id="progressDots">
+  <button class="pdot active" onclick="scrollToPanel(0)" aria-label="Hero"></button>
+  <button class="pdot" onclick="scrollToPanel(1)" aria-label="About"></button>
+  <button class="pdot" onclick="scrollToPanel(2)" aria-label="Writing"></button>
+  <button class="pdot" onclick="scrollToPanel(3)" aria-label="Interests"></button>
+  <button class="pdot" onclick="scrollToPanel(4)" aria-label="Contact"></button>
+</div>
+
+<!-- MAIN SITE -->
+<div class="scroll-container" id="mainSite">
+
+  <!-- HERO -->
+  <section class="panel panel-hero" id="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">McGill University · Montréal, QC</div>
+        <div class="hero-name" id="heroName">
+          <span class="hn-1" id="hn1">Vinicius</span>
+          <span class="hn-2" id="hn2">de Oliveira</span>
+          <span class="hn-3" id="hn3">Bastos</span>
+        </div>
+        <p class="hero-tagline">Reading the world through two continents,<br>four languages, and one faith.</p>
+        <div class="hero-langs">
+          <span class="lp">PT</span>
+          <span class="lp">EN</span>
+          <span class="lp">FR</span>
+          <span class="lp">ES</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="photo-frame">
+          <!-- 
+            INSTRUÇÃO: Substitua o bloco abaixo pela sua foto.
+            Salve sua foto como "photo.jpg" na mesma pasta que este arquivo,
+            depois substitua o bloco pela linha:
+            <img src="photo.jpg" alt="Vinicius de Oliveira Bastos">
+          -->
+          <div class="photo-placeholder">
+            <div class="photo-placeholder-initials">VB</div>
+            <div class="photo-placeholder-hint">Adicione sua foto:<br>salve como photo.jpg<br>na mesma pasta</div>
+          </div>
+          <span class="photo-caption">Montréal, 2025</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll to discover</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="panel panel-about" id="about">
+    <div class="about-inner">
+      <div>
+        <span class="about-sec-label">About</span>
+        <div class="about-big">From <em>Juiz de Fora</em><br>to the world.</div>
+        <p class="about-p">I'm a U1 student at <strong>McGill University</strong> studying International Development and Political Science.</p>
+        <p class="about-p">Born in <strong>Juiz de Fora, MG, Brazil</strong> — moved to Canada at 14. I carry both places in everything I write and think.</p>
+        <p class="about-p">Drawn to questions about power, inequality, and what development actually means. Guided by faith, shaped by football, moved by music.</p>
+      </div>
+      <div class="about-tags">
+        <div class="atag">
+          <svg class="atag-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span class="atag-text"><strong>Juiz de Fora → Montréal</strong></span>
+        </div>
+        <div class="atag">
+          <svg class="atag-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <span class="atag-text">Currently reading: <strong>Mystical Paths to God</strong></span>
+        </div>
+        <div class="atag">
+          <svg class="atag-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="atag-text"><strong>Vasco da Gama</strong> — sempre, em qualquer lugar</span>
+        </div>
+        <div class="atag">
+          <svg class="atag-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span class="atag-text"><strong>Coldplay</strong> · U2 · Charlie Brown Jr.</span>
+        </div>
+        <div class="atag">
+          <svg class="atag-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span class="atag-text">Reformed theology · faith as a way of seeing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section class="panel panel-writing" id="writing">
+    <div class="writing-inner">
+      <span class="about-sec-label" style="color:var(--pale);">Writing</span>
+      <div class="writing-big">Essays on a<br><em>restless</em> world.</div>
+      <p class="writing-sub">Arguments I believe in. Questions I'm still working through. Written during my first year at McGill.</p>
+      <div class="essays">
+        <a class="ecard" href="#" onclick="showEssay('essay1'); return false;">
+          <span class="e-num">01</span>
+          <div>
+            <span class="e-tag">Political Science · Conflict</span>
+            <div class="e-title">Between annihilation and agreement</div>
+            <p class="e-desc">Sri Lanka and Nepal — two civil wars, two radically different endings. A structural explanation in three acts.</p>
+          </div>
+          <span class="e-arrow">→</span>
+        </a>
+        <a class="ecard" href="#" onclick="showEssay('essay2'); return false;">
+          <span class="e-num">02</span>
+          <div>
+            <span class="e-tag">Development Theory</span>
+            <div class="e-title">Two lenses, one problem</div>
+            <p class="e-desc">Modernization vs. dependency — not a debate to win, but a tension to hold.</p>
+          </div>
+          <span class="e-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERESTS -->
+  <section class="panel panel-interests" id="interests">
+    <div class="interests-inner">
+      <span class="about-sec-label" style="color:rgba(159,191,159,0.6);">Interests</span>
+      <div class="int-big">What moves me<br><em>beyond</em> the page.</div>
+      <div class="int-grid">
+        <div class="icard">
+          <div class="icard-title">Theology & faith</div>
+          <div class="icard-desc">Reformed tradition, mystical literature. Faith as a way of seeing, not just believing.</div>
+        </div>
+        <div class="icard">
+          <div class="icard-title">Football & belonging</div>
+          <div class="icard-desc">Vasco da Gama from abroad. Football as culture, identity, and shared grief.</div>
+        </div>
+        <div class="icard">
+          <div class="icard-title">Political economy</div>
+          <div class="icard-desc">Why some places stay poor. Power, structures, the Global South.</div>
+        </div>
+        <div class="icard">
+          <div class="icard-title">Language</div>
+          <div class="icard-desc">Four languages, four ways of thinking. Something always shifts in translation.</div>
+        </div>
+      </div>
+      <div class="books-section">
+        <span class="books-label">On my shelf</span>
+        <div class="books-row">
+          <div class="book-item">
+            <div class="bc b1">The Screwtape Letters</div>
+            <div class="bname">C.S. Lewis</div>
+          </div>
+          <div class="book-item">
+            <div class="bc b2">Debating Calvinism</div>
+            <div class="bname">Hunt & White</div>
+          </div>
+          <div class="book-item">
+            <div class="bc b3">The Reason for God</div>
+            <div class="bname">T. Keller</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="panel panel-contact" id="contact">
+    <div class="contact-inner">
+      <span class="about-sec-label" style="color:rgba(255,255,255,0.2);">Contact</span>
+      <div class="contact-big" id="ctaBig">
+        <span class="cb-w">Let's talk</span>
+        <span class="cb-g">about</span>
+        <span class="cb-gold">ideas.</span>
+      </div>
+      <a class="contact-email" href="mailto:vinicius.bastos@mail.mcgill.ca">vinicius.bastos@mail.mcgill.ca</a>
+      <div class="contact-footer">
+        <span class="cf-text">Vinicius de Oliveira Bastos · Montréal, 2026</span>
+        <span class="cf-text">McGill University</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ESSAY PAGES -->
+<div class="essay-page" id="essay1">
+  <button class="essay-back" onclick="showMain()">Back to site</button>
+  <div class="essay-header">
+    <span class="essay-header-tag">Political Science · Conflict</span>
+    <h1 class="essay-header-title">Between annihilation and agreement:<br>Civil war termination in Sri Lanka and Nepal</h1>
+    <span class="essay-header-meta">Written during my first year at McGill University, April 2026</span>
+  </div>
+  <div class="essay-body">
+    <p>In May 2009, the Sri Lankan army announced the death of the leader of the Liberation Tigers of Tamil Eelam, Velupillai Prabhakaran, ending twenty-six years of civil war in a total military victory. Three years earlier, from only a few thousand kilometres away, the Nepalese government and the Communist Party of Nepal signed a comprehensive peace agreement that ended ten years of insurgency entirely through negotiation. Two Asian conflicts, two radically distinct closures. Why would one war end with annihilation while the other end with political peace?</p>
+    <p>The conventional response appeals to the intensity of the conflict or to the leaders' personal desires. This essay argues that this explanation is insufficient. The divergent outcomes instead reflect the interaction of three core factors: the ethnic versus ideological nature of each dispute, the military balance that produced a growing asymmetry in one case and a prolonged impasse in the other, and the internal political forces that closed or opened space for negotiation.</p>
+
+    <h2>I. The nature of the conflict</h2>
+    <p>The nature of a civil war — whether rooted in ethnic identities or ideological objectives — largely shapes whether an agreement is viable. Ethnic civil wars generate specific dynamics that make agreements fragile: disputes are often territorially indivisible, violence reactivates group identities, and recruitment occurs within communities, eliminating appeals that cross boundaries.</p>
+    <p>In Sri Lanka, these dynamics were highly evident. The conflict was, from its beginning, an identity struggle between the Sinhalese majority and the Tamil minority. The Liberation Tigers of Tamil Eelam, founded in 1976, embodied this logic — the creation of a Tamil separatist and independent state. The Tamil Eelam became a non-negotiable objective. Any compromise short of independence amounted to a betrayal of the movement's founding purpose.</p>
+    <p>Nepal's conflict, by contrast, did not have ethnicity as its main driver. The Communist Party of Nepal (Maoist) was founded in 1996 with a class-based ideological program. Ideological wars are "almost always fought for control over an existing state," which makes them more amenable to solutions that distribute power within a unified structure. A party that wishes to take over the state can, in principle, accept taking part in it — as long as conditions are favourable.</p>
+
+    <h2>II. Military balance and the logic of stalemate</h2>
+    <p>The military trajectory of a civil war determines whether both parties perceive a negotiated exit as better than continued combat. In Nepal, the conflict between CPN(M) and the Royal Nepalese Army created precisely the kind of stalemate that conflict scholars link to negotiated agreements. Neither side could win decisively. This deadlock made negotiation rationally attractive for both.</p>
+    <p>Sri Lanka followed a radically different logic. The Mahinda Rajapaksa regime, elected in 2005, made a deliberate decision to annihilate the LTTE regardless of economic, human, and diplomatic costs. By 2008, the military balance had shifted decisively against the LTTE. All attempts at mediation failed — not due to incompetence, but because the structural conditions for a deal were absent.</p>
+
+    <h2>III. Political trends and the space for negotiation</h2>
+    <p>In Nepal, the junction of a weak monarchy, marginalized political parties, and a popular revolution created conditions for an improbable coalition. The king had shut all electoral channels. This logic led to a deal between the CPN(M) and seven major opposition parties in November 2005. Each side needed the other to overthrow the king. Ironically, repression created the political opening that ended the war.</p>
+    <p>In Sri Lanka, there was no such dynamic. The political system was structured around "ethnic outbidding" — competition between parties for the Sinhalese majority vote through hardline positions toward the Tamils. Any concession was political suicide. The possibility of a coalition simply did not exist.</p>
+
+    <blockquote>The dominant literature tends to treat military and political elements as analytically separate variables. What Sri Lanka and Nepal demonstrate is that these domains are inseparable. The disposition to negotiate is produced, manufactured, or destroyed by the conflict's structure, the balance of forces, and the political possibilities that the internal system allows.</blockquote>
+
+    <p>When these three elements converge in the direction of exclusion — as in Sri Lanka — the war ends by force. When they converge toward openness — as in Nepal — a deal becomes possible, even if imperfect.</p>
+  </div>
+</div>
+
+<div class="essay-page" id="essay2">
+  <button class="essay-back" onclick="showMain()">Back to site</button>
+  <div class="essay-header">
+    <span class="essay-header-tag">Development Theory</span>
+    <h1 class="essay-header-title">Two lenses, one problem:<br>Modernization and dependency theory</h1>
+    <span class="essay-header-meta">Written during my first year at McGill University, February 2026</span>
+  </div>
+  <div class="essay-body">
+    <p>The debate between modernization and dependency theory cannot be reduced to choosing the better option. Rather, it requires comprehending how each perspective illuminates — and eclipses — distinct aspects of underdevelopment. While the level of analysis in the modernization perspective is behavioral, focusing on individuals while undermining structural complexities, the dependency perspective is more structural, capturing global power dynamics while neglecting the variability of human behavior.</p>
+
+    <h2>Modernization: the internal logic</h2>
+    <p>Modernization theory emerged among Western policymakers and scholars in the 1950s during the Cold War, when Western powers were seeking to strengthen their influence in the Global South. This context produced a dichotomy of "traditional" versus "modern" societies — the Global South would need to adopt Global North institutions and values to modernize.</p>
+    <p>The modernization perspective recognizes that values, culture, and education matter for development. Countries like Japan, South Korea, and Taiwan demonstrate that certain traditional features can help rather than hinder development. This view offers concrete and practical recommendations — a genuine strength.</p>
+    <p>Yet the theory has serious methodological problems. It ignores power dynamics, global structures, and center-peripheral relations. It overlooks the history of colonialism. And it claims "universal validity" while simultaneously employing the concept of "modernity of tradition" — an internal contradiction it never resolves.</p>
+
+    <h2>Dependency: the structural response</h2>
+    <p>Dependency theory emerged in the 1960s and 1970s as a reaction from African and Latin American nations to imperialism. Drawing on Marxist theory, it holds that Global South countries were conditioned by the expansion and exploitation of dominant countries. Underdevelopment and development are aspects of the same phenomenon.</p>
+    <p>The framework considers the global system as the primary unit of analysis. Rather than attributing underdevelopment to cultural values, dependency emphasizes how economic structures and processes of exploitation shape development outcomes. It explains well the persistence of global inequality by highlighting the role of historical colonial exploitation.</p>
+    <p>Yet dependency also presents limitations. Since it emphasizes external structures, it risks falling into structural determinism — underestimating the capacity for cultural and institutional change from within. And it remains more analytical than prescriptive.</p>
+
+    <blockquote>Both perspectives offer valuable but partial insights. In the contemporary world marked by interconnectedness, the persistence of inequalities suggests that internal factors and external structures both mold trajectories toward development — which highlights the contributions and limitations of both theories.</blockquote>
+  </div>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Hero parallax
+  const p1 = document.getElementById('hero');
+  const hn1 = document.getElementById('hn1');
+  const hn2 = document.getElementById('hn2');
+  const hn3 = document.getElementById('hn3');
+  p1.addEventListener('mousemove', e => {
+    const r = p1.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    hn1.style.transform = `translate(${x*16}px,${y*8}px)`;
+    hn2.style.transform = `translate(${x*-10}px,${y*14}px)`;
+    hn3.style.transform = `translate(${x*22}px,${y*-10}px)`;
+    hn1.style.transition = 'transform 0.05s';
+    hn2.style.transition = 'transform 0.05s';
+    hn3.style.transition = 'transform 0.05s';
+  });
+  p1.addEventListener('mouseleave', () => {
+    [hn1, hn2, hn3].forEach(n => {
+      n.style.transition = 'transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)';
+      n.style.transform = 'translate(0,0)';
+    });
+  });
+
+  // Contact skew
+  const cta = document.getElementById('ctaBig');
+  cta.addEventListener('mousemove', e => {
+    const r = cta.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    cta.style.transform = `skewX(${x * 5}deg)`;
+    cta.style.transition = 'transform 0.08s';
+  });
+  cta.addEventListener('mouseleave', () => {
+    cta.style.transform = 'skewX(0)';
+    cta.style.transition = 'transform 0.6s ease';
+  });
+
+  // Scroll dots
+  const sc = document.getElementById('mainSite');
+  const dots = document.querySelectorAll('.pdot');
+  const panels = ['hero','about','writing','interests','contact'];
+  sc.addEventListener('scroll', () => {
+    const idx = Math.round(sc.scrollTop / sc.clientHeight);
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+      if (idx >= 3) {
+        d.style.background = d.classList.contains('active') ? '#EDE7DC' : 'rgba(237,231,220,0.25)';
+      } else {
+        d.style.background = d.classList.contains('active') ? 'var(--ink)' : 'rgba(26,26,24,0.2)';
+      }
+    });
+  });
+
+  function scrollToPanel(i) {
+    sc.scrollTo({ top: i * sc.clientHeight, behavior: 'smooth' });
+  }
+
+  // Nav links smooth scroll
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const idx = panels.indexOf(href.slice(1));
+        if (idx >= 0) scrollToPanel(idx);
+      }
+    });
+  });
+
+  // Essay show/hide
+  const mainSite = document.getElementById('mainSite');
+  const progressDots = document.getElementById('progressDots');
+
+  function showEssay(id) {
+    mainSite.style.display = 'none';
+    progressDots.style.display = 'none';
+    document.querySelectorAll('.essay-page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function showMain() {
+    mainSite.style.display = 'block';
+    progressDots.style.display = 'flex';
+    document.querySelectorAll('.essay-page').forEach(p => p.classList.remove('active'));
+  }
+</script>
+</body>
+</html>
