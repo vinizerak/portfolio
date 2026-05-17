@@ -10,337 +10,369 @@
 :root{
   --ink:#1A1A18; --cream:#F4EFE6; --green:#1B4D3E;
   --gold:#C49A3C; --sand:#EDE7DC; --muted:#7A7A72; --pale:#B4A882;
-  --ff-display:'Playfair Display',Georgia,serif;
-  --ff-body:'Source Serif 4','Georgia',serif;
+  --ff-d:'Playfair Display',Georgia,serif;
+  --ff-b:'Source Serif 4',Georgia,serif;
+  /* 100dvh respects mobile browser chrome; falls back to 100vh */
+  --full: 100dvh;
 }
+@supports not (height: 100dvh){ :root{ --full: 100vh; } }
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;touch-action:none;}
-body{background:var(--ink);color:var(--cream);font-family:var(--ff-body);}
+html{scroll-behavior:auto;}
+body{
+  background:var(--ink);color:var(--cream);
+  font-family:var(--ff-b);overflow-x:hidden;
+}
 
 /* ── PROGRESS ── */
-.prog{position:fixed;top:0;left:0;right:0;height:1px;z-index:600;background:rgba(244,239,230,.07);}
-.prog-fill{height:100%;background:var(--gold);width:0%;transition:width .2s;}
+#prog{position:fixed;top:0;left:0;height:1px;width:0%;background:var(--gold);z-index:900;}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:22px 48px;pointer-events:none;}
-.nav-logo{font-family:var(--ff-display);font-size:11px;font-weight:700;color:var(--cream);letter-spacing:.04em;}
-.nav-ctr{font-size:9px;letter-spacing:.18em;color:rgba(244,239,230,.28);}
-
-/* ── SIDE DOTS ── */
-.dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:500;}
-.dot{width:5px;height:5px;border-radius:50%;background:rgba(244,239,230,.18);border:none;padding:0;cursor:pointer;transition:background .3s,transform .3s;}
-.dot.active{background:var(--cream);transform:scale(1.7);}
-
-/* ── SLIDES CONTAINER ── */
-.slides-wrap{position:fixed;inset:0;overflow:hidden;user-select:none;}
-
-/* ── SLIDER COLUMN ── */
-.slider{
-  position:absolute;
-  top:0; left:0; right:0;
-  will-change:transform;
-  transition:transform .6s cubic-bezier(.77,0,.18,1);
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 52px;mix-blend-mode:difference;pointer-events:none;
 }
-.slider.instant{transition:none;}
+.nav-logo{font-family:var(--ff-d);font-size:11px;font-weight:700;color:var(--cream);letter-spacing:.06em;}
+.nav-idx{font-size:9px;letter-spacing:.2em;color:rgba(244,239,230,.35);}
 
-.slide{
-  position:relative;
-  width:100%;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  overflow:hidden;
+/* ── NOISE ── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:700;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
 }
-.slide::before{
-  content:'';position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;
-}
+
+/* ════════════════════
+   SECTIONS
+════════════════════ */
+section{position:relative;overflow:hidden;}
 
 /* ── HERO ── */
-.s-hero{background:var(--ink);justify-content:center;}
-.hero-name{text-align:center;position:relative;z-index:2;padding:0 24px;}
-.hero-line{display:block;overflow:hidden;line-height:.92;}
-.hero-line span{display:block;transform:translateY(110%);}
-.hl1 span{font-family:var(--ff-display);font-size:clamp(48px,9vw,118px);font-weight:900;color:var(--cream);}
-.hl2 span{font-family:var(--ff-display);font-size:clamp(48px,9vw,118px);font-weight:900;font-style:italic;color:var(--green);}
-.hl3 span{font-family:var(--ff-display);font-size:clamp(48px,9vw,118px);font-weight:900;color:var(--gold);}
-.hero-sub{font-family:var(--ff-display);font-size:clamp(13px,1.3vw,16px);font-style:italic;color:var(--muted);margin-top:28px;line-height:1.7;opacity:0;}
-.hero-langs{display:flex;justify-content:center;gap:8px;margin-top:16px;opacity:0;flex-wrap:wrap;}
-.lp{font-size:8px;letter-spacing:.16em;text-transform:uppercase;padding:3px 10px;border:.5px solid rgba(244,239,230,.18);color:var(--muted);}
-.hero-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.2);opacity:0;display:flex;align-items:center;gap:8px;white-space:nowrap;}
-.hero-hint::before,.hero-hint::after{content:'';width:18px;height:.5px;background:rgba(244,239,230,.18);}
+#hero{
+  height:var(--full);min-height:580px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--ink);
+}
+.hero-inner{text-align:center;position:relative;z-index:2;padding:0 24px;}
+.h-line{display:block;overflow:hidden;line-height:.9;}
+.h-line span{display:block;transform:translateY(110%);}
+.h-l1 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;color:var(--cream);}
+.h-l2 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;font-style:italic;color:var(--green);}
+.h-l3 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;color:var(--gold);}
+.hero-sub{font-family:var(--ff-d);font-size:clamp(13px,1.4vw,17px);font-style:italic;color:var(--muted);margin-top:32px;line-height:1.7;opacity:0;}
+.hero-langs{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap;opacity:0;}
+.lp{font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:4px 11px;border:.5px solid rgba(244,239,230,.18);color:var(--muted);}
+.hero-bg-letter{
+  position:absolute;font-family:var(--ff-d);font-weight:900;font-style:italic;
+  font-size:clamp(260px,38vw,520px);line-height:1;
+  color:rgba(244,239,230,.018);user-select:none;pointer-events:none;
+  top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;will-change:transform;
+}
+.scroll-hint{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;
+}
+.scroll-hint span{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,239,230,.2);}
+.scroll-line{width:.5px;height:44px;background:linear-gradient(var(--gold),transparent);animation:sp 1.8s ease-in-out infinite;}
+@keyframes sp{0%,100%{opacity:.25;transform:scaleY(.5);transform-origin:top;}50%{opacity:1;transform:scaleY(1);transform-origin:top;}}
 
 /* ── ESSAYS ── */
-.s-essay{display:flex;align-items:center;padding:80px 8% 40px;}
-.essay-bnum{position:absolute;font-family:var(--ff-display);font-weight:900;font-style:italic;font-size:clamp(120px,22vw,280px);line-height:1;user-select:none;pointer-events:none;opacity:0;}
-.e1-num{right:-1%;bottom:-6%;color:rgba(237,231,220,.04);}
-.e2-num{left:-1%;top:-6%;color:rgba(26,26,24,.06);}
-.essay-content{position:relative;z-index:2;max-width:600px;}
-.essay-tag{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:16px;display:block;opacity:0;transform:translateY(16px);}
-.essay-title{font-family:var(--ff-display);font-weight:700;line-height:.92;margin-bottom:16px;opacity:0;transform:translateY(24px);}
+#essay1{
+  min-height:var(--full);background:var(--ink);
+  display:flex;align-items:center;padding:clamp(80px,12vh,140px) 8%;
+}
+#essay2{
+  min-height:var(--full);background:var(--sand);color:var(--ink);
+  display:flex;align-items:center;padding:clamp(80px,12vh,140px) 8%;
+}
+.essay-wrap{position:relative;z-index:2;max-width:640px;}
+.essay-num{
+  position:absolute;font-family:var(--ff-d);font-weight:900;font-style:italic;
+  font-size:clamp(130px,20vw,260px);line-height:1;
+  user-select:none;pointer-events:none;will-change:transform;
+}
+.essay-num-1{right:-3%;bottom:-10%;color:rgba(244,239,230,.04);}
+.essay-num-2{left:-3%;top:-8%;color:rgba(26,26,24,.05);}
+.essay-tag{font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;display:block;transform:translateY(32px);opacity:0;}
+#essay1 .essay-tag{color:var(--green);}
+#essay2 .essay-tag{color:var(--green);}
+.essay-title{font-family:var(--ff-d);font-weight:700;line-height:.9;margin-bottom:20px;transform:translateY(40px);opacity:0;}
 .essay-title em{font-style:italic;}
-.essay-desc{font-size:clamp(13px,1.3vw,15px);line-height:1.75;margin-bottom:24px;opacity:0;transform:translateY(16px);}
-.essay-btn{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;border-bottom:.5px solid currentColor;padding-bottom:2px;text-decoration:none;color:inherit;opacity:0;transform:translateY(12px);}
-.essay-btn::after{content:'→';font-size:13px;}
-.e1-slide{background:var(--ink);}
-.e1-slide .essay-title{font-size:clamp(30px,5.5vw,70px);color:var(--cream);}
-.e1-slide .essay-title em{color:var(--gold);}
-.e1-slide .essay-desc{color:rgba(244,239,230,.42);}
-.e1-slide .essay-btn{color:rgba(244,239,230,.55);}
-.e2-slide{background:var(--sand);color:var(--ink);}
-.e2-slide .essay-tag{color:var(--green);}
-.e2-slide .essay-title{font-size:clamp(30px,5.5vw,70px);color:var(--ink);}
-.e2-slide .essay-title em{color:var(--green);}
-.e2-slide .essay-desc{color:rgba(26,26,24,.48);}
-.e2-slide .essay-btn{color:rgba(26,26,24,.52);}
+#essay1 .essay-title{font-size:clamp(32px,6vw,78px);color:var(--cream);}
+#essay1 .essay-title em{color:var(--gold);}
+#essay2 .essay-title{font-size:clamp(32px,6vw,78px);color:var(--ink);}
+#essay2 .essay-title em{color:var(--green);}
+.essay-desc{font-size:clamp(13px,1.3vw,16px);line-height:1.8;margin-bottom:28px;transform:translateY(24px);opacity:0;}
+#essay1 .essay-desc{color:rgba(244,239,230,.4);}
+#essay2 .essay-desc{color:rgba(26,26,24,.46);}
+.essay-link{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  border-bottom:.5px solid currentColor;padding-bottom:2px;
+  text-decoration:none;transform:translateY(20px);opacity:0;
+}
+.essay-link::after{content:'→';font-size:14px;}
+#essay1 .essay-link{color:rgba(244,239,230,.5);}
+#essay2 .essay-link{color:rgba(26,26,24,.5);}
 
-/* ── CV SLIDE ── */
-.s-cv{background:var(--ink);padding:0;}
-.cv-photos{position:absolute;right:0;top:0;bottom:0;width:42%;overflow:hidden;}
-.cv-photos::before{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--ink) 0%,transparent 40%);z-index:2;}
-.cv-photos::after{content:'';position:absolute;inset:0;background:rgba(26,26,24,.22);z-index:1;}
-.cv-photo-track{display:flex;flex-direction:column;animation:photoScroll 20s linear infinite;}
-.cv-photo-track img{width:100%;height:34vh;object-fit:cover;object-position:center 20%;display:block;flex-shrink:0;}
-@keyframes photoScroll{0%{transform:translateY(0);}100%{transform:translateY(-50%);}}
-.cv-content{position:relative;z-index:3;padding:80px 48px 48px;display:flex;flex-direction:column;justify-content:center;width:58%;}
-.cv-tag{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block;opacity:0;transform:translateY(16px);}
-.cv-title{font-family:var(--ff-display);font-size:clamp(28px,3.8vw,50px);font-weight:900;line-height:.92;color:var(--cream);margin-bottom:28px;opacity:0;transform:translateY(24px);}
-.cv-title em{font-style:italic;color:var(--green);}
-.cv-section{margin-bottom:20px;opacity:0;transform:translateY(16px);}
-.cv-section-label{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--pale);margin-bottom:8px;display:block;border-bottom:.5px solid rgba(244,239,230,.08);padding-bottom:5px;}
-.cv-items{display:flex;flex-direction:column;gap:7px;}
-.cv-item-title{font-family:var(--ff-display);font-size:clamp(12px,1.2vw,15px);font-weight:700;color:var(--cream);line-height:1.2;}
-.cv-item-sub{font-size:clamp(10px,.95vw,12px);color:var(--muted);line-height:1.5;}
-.cv-item-sub em{font-style:italic;color:var(--pale);}
-.cv-two{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-.lang-list{display:flex;flex-wrap:wrap;gap:5px;}
-.lang-badge{font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border:.5px solid rgba(244,239,230,.18);color:var(--muted);line-height:1.6;}
-.lang-badge span{color:rgba(244,239,230,.28);margin-left:3px;}
-.skill-list{display:flex;flex-wrap:wrap;gap:4px;}
-.skill-tag{font-size:8px;letter-spacing:.09em;text-transform:uppercase;padding:3px 7px;background:rgba(27,77,62,.22);border:.5px solid rgba(27,77,62,.48);color:rgba(159,191,159,.75);}
+/* ── CV ── */
+#cv{
+  min-height:var(--full);background:var(--ink);
+  display:flex;align-items:stretch;position:relative;overflow:hidden;
+}
+.cv-photos{position:absolute;right:0;top:0;bottom:0;width:44%;overflow:hidden;}
+.cv-photos::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to right,var(--ink) 0%,rgba(26,26,24,.55) 55%,transparent 100%);
+}
+.cv-strip{display:flex;flex-direction:column;will-change:transform;}
+.cv-strip img{width:100%;height:38vh;object-fit:cover;object-position:center 15%;display:block;flex-shrink:0;}
+.cv-body{
+  position:relative;z-index:3;
+  padding:clamp(72px,10vh,110px) 52px clamp(60px,8vh,90px);
+  width:58%;display:flex;flex-direction:column;justify-content:center;
+}
+.cv-eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block;opacity:0;transform:translateY(20px);}
+.cv-headline{font-family:var(--ff-d);font-size:clamp(28px,3.8vw,52px);font-weight:900;line-height:.9;color:var(--cream);margin-bottom:32px;opacity:0;transform:translateY(28px);}
+.cv-headline em{font-style:italic;color:var(--green);}
+.cv-block{margin-bottom:20px;opacity:0;transform:translateY(18px);}
+.cv-label{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--pale);margin-bottom:8px;display:block;border-bottom:.5px solid rgba(244,239,230,.07);padding-bottom:5px;}
+.cv-rows{display:flex;flex-direction:column;gap:7px;}
+.cv-row-title{font-family:var(--ff-d);font-size:clamp(12px,1.15vw,15px);font-weight:700;color:var(--cream);line-height:1.2;}
+.cv-row-sub{font-size:clamp(10px,.9vw,12px);color:var(--muted);line-height:1.5;}
+.cv-row-sub em{font-style:italic;color:var(--pale);}
+.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.lang-chips,.skill-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.chip-lang{font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:.5px solid rgba(244,239,230,.16);color:var(--muted);line-height:1.7;}
+.chip-lang span{color:rgba(244,239,230,.24);margin-left:3px;}
+.chip-skill{font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;background:rgba(27,77,62,.2);border:.5px solid rgba(27,77,62,.44);color:rgba(159,191,159,.75);}
 
 /* ── CONTACT ── */
-.s-contact{background:var(--ink);display:flex;align-items:center;padding:0 48px;}
-.contact-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(244,239,230,.01) 60px,rgba(244,239,230,.01) 61px);}
-.contact-big{font-family:var(--ff-display);font-size:clamp(42px,8.5vw,114px);font-weight:900;line-height:.88;position:relative;z-index:2;}
-.cb{display:block;overflow:hidden;}
-.cb span{display:block;transform:translateY(110%);}
-.cw span{color:var(--cream);}
-.cg span{font-style:italic;color:var(--green);}
-.cgold span{color:var(--gold);}
-.contact-email-el{position:absolute;bottom:clamp(52px,7vh,90px);left:48px;font-size:clamp(12px,1.4vw,15px);color:rgba(159,191,159,.8);text-decoration:none;border-bottom:.5px solid rgba(27,77,62,.45);padding-bottom:3px;z-index:2;opacity:0;transition:color .2s;}
-.contact-email-el:hover{color:#9FD4BA;}
-.contact-foot-el{position:absolute;bottom:24px;left:48px;right:48px;display:flex;justify-content:space-between;border-top:.5px solid rgba(255,255,255,.05);padding-top:14px;z-index:2;opacity:0;}
-.cfe{font-size:9px;color:rgba(255,255,255,.13);letter-spacing:.07em;}
+#contact{
+  min-height:var(--full);background:var(--ink);
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  padding:0 52px;position:relative;overflow:hidden;
+}
+.contact-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 64px,rgba(244,239,230,.012) 64px,rgba(244,239,230,.012) 65px);pointer-events:none;}
+.contact-word{display:block;overflow:hidden;font-family:var(--ff-d);font-weight:900;font-size:clamp(44px,9.5vw,124px);line-height:.86;}
+.contact-word span{display:block;transform:translateY(110%);}
+.cw1 span{color:var(--cream);}
+.cw2 span{color:var(--green);font-style:italic;}
+.cw3 span{color:var(--gold);}
+.contact-email{display:block;margin-top:52px;font-size:clamp(13px,1.5vw,16px);color:rgba(159,191,159,.8);text-decoration:none;border-bottom:.5px solid rgba(27,77,62,.4);padding-bottom:3px;opacity:0;transition:color .25s;}
+.contact-email:hover{color:#9FD4BA;}
+.contact-foot{position:absolute;bottom:28px;left:52px;right:52px;display:flex;justify-content:space-between;border-top:.5px solid rgba(255,255,255,.05);padding-top:14px;opacity:0;}
+.contact-foot span{font-size:9px;color:rgba(255,255,255,.12);letter-spacing:.07em;}
 
 /* ── LOADER ── */
 #loader{position:fixed;inset:0;z-index:9000;background:var(--ink);display:flex;align-items:center;justify-content:center;}
-.loader-name{font-family:var(--ff-display);font-size:clamp(28px,4vw,52px);font-weight:700;font-style:italic;color:var(--cream);overflow:hidden;}
-.loader-name span{display:block;transform:translateY(110%);}
-.loader-bar{position:absolute;bottom:0;left:0;height:1px;background:var(--gold);width:0%;}
+.ld-name{font-family:var(--ff-d);font-size:clamp(28px,4vw,52px);font-weight:700;font-style:italic;color:var(--cream);overflow:hidden;}
+.ld-name span{display:block;transform:translateY(110%);}
+.ld-bar{position:absolute;bottom:0;left:0;height:1px;background:var(--gold);width:0%;}
 
-/* ── ESSAY PAGES ── */
+/* ── ESSAY OVERLAY ── */
 .essay-page{display:none;position:fixed;inset:0;overflow-y:auto;z-index:800;background:var(--cream);color:var(--ink);padding:100px 0 80px;}
-.essay-page.active{display:block;}
+.essay-page.open{display:block;}
 .ep-inner{max-width:680px;margin:0 auto;padding:0 32px;}
-.ep-back{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;margin-bottom:48px;cursor:pointer;transition:color .2s;font-family:var(--ff-body);}
+.ep-back{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;margin-bottom:48px;cursor:pointer;transition:color .2s;font-family:var(--ff-b);}
 .ep-back:hover{color:var(--ink);}
 .ep-back::before{content:'←';font-size:13px;}
-.ep-header{border-bottom:.5px solid rgba(26,26,24,.1);padding-bottom:28px;margin-bottom:44px;text-align:center;}
+.ep-hdr{border-bottom:.5px solid rgba(26,26,24,.1);padding-bottom:28px;margin-bottom:40px;text-align:center;}
 .ep-tag{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:12px;display:block;}
-.ep-title{font-family:var(--ff-display);font-size:clamp(22px,3.5vw,38px);font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:10px;}
+.ep-title{font-family:var(--ff-d);font-size:clamp(22px,3.5vw,38px);font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:10px;}
 .ep-meta{font-size:11px;color:var(--pale);font-style:italic;}
 .ep-body{font-size:16px;line-height:1.95;color:#2A2A26;}
 .ep-body p{margin-bottom:20px;}
-.ep-body h2{font-family:var(--ff-display);font-size:21px;font-weight:700;color:var(--ink);margin:40px 0 16px;}
+.ep-body h2{font-family:var(--ff-d);font-size:21px;font-weight:700;color:var(--ink);margin:40px 0 16px;}
 .ep-body blockquote{border-left:2px solid var(--green);padding:14px 22px;background:var(--sand);margin:28px 0;font-style:italic;color:var(--muted);line-height:1.8;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
-  nav{padding:18px 20px;}
-  .dots{right:10px;}
-  .s-essay{padding:72px 6% 36px;}
-  .s-contact{padding:0 22px;}
-  .contact-email-el,.contact-foot-el{left:22px;right:22px;}
-  .cv-photos{display:none;}
-  .cv-content{width:100%;padding:72px 22px 36px;}
-  .cv-two{grid-template-columns:1fr;}
+  nav{padding:18px 22px;}
+  #essay1,#essay2{padding:clamp(72px,10vh,110px) 6%;}
+  #cv .cv-body{width:100%;padding:clamp(68px,9vh,100px) 22px 52px;}
+  #cv .cv-photos{display:none;}
+  .cv-grid{grid-template-columns:1fr;}
+  #contact{padding:0 22px;}
+  .contact-email,.contact-foot{left:22px;right:22px;}
+  .ep-inner{padding:0 20px;}
 }
 @media(max-width:480px){
-  .hero-hint{display:none;}
+  .scroll-hint{display:none;}
 }
 </style>
 </head>
 <body>
 
 <div id="loader">
-  <div class="loader-name"><span id="ldrTxt">Vinicius Bastos</span></div>
-  <div class="loader-bar" id="ldrBar"></div>
+  <div class="ld-name"><span id="ldTxt">Vinicius Bastos</span></div>
+  <div class="ld-bar" id="ldBar"></div>
 </div>
 
-<div class="prog"><div class="prog-fill" id="progFill"></div></div>
+<div id="prog"></div>
 
 <nav>
   <span class="nav-logo">V. de Oliveira Bastos</span>
-  <span class="nav-ctr" id="navCtr">01 / 05</span>
+  <span class="nav-idx" id="navIdx">01</span>
 </nav>
 
-<div class="dots" id="dotsEl"></div>
-
-<div class="slides-wrap" id="slidesWrap">
-  <div class="slider instant" id="slider">
-
-    <!-- 01 HERO -->
-    <div class="slide s-hero" id="sl0">
-      <div class="hero-name">
-        <span class="hero-line hl1"><span>Vinicius</span></span>
-        <span class="hero-line hl2"><span>de Oliveira</span></span>
-        <span class="hero-line hl3"><span>Bastos</span></span>
-        <p class="hero-sub">Reading the world through two continents, four languages, and one faith.</p>
-        <div class="hero-langs">
-          <span class="lp">PT</span><span class="lp">EN</span>
-          <span class="lp">FR</span><span class="lp">ES</span>
-        </div>
-      </div>
-      <div class="hero-hint">swipe or scroll to explore</div>
+<!-- 01 HERO -->
+<section id="hero">
+  <div class="hero-bg-letter" id="heroBg">V</div>
+  <div class="hero-inner">
+    <span class="h-line h-l1"><span>Vinicius</span></span>
+    <span class="h-line h-l2"><span>de Oliveira</span></span>
+    <span class="h-line h-l3"><span>Bastos</span></span>
+    <p class="hero-sub" id="heroSub">Reading the world through two continents, four languages, and one faith.</p>
+    <div class="hero-langs" id="heroLangs">
+      <span class="lp">PT</span><span class="lp">EN</span>
+      <span class="lp">FR</span><span class="lp">ES</span>
     </div>
-
-    <!-- 02 ESSAY 01 -->
-    <div class="slide e1-slide s-essay" id="sl1">
-      <div class="essay-bnum e1-num" id="e1num">01</div>
-      <div class="essay-content">
-        <span class="essay-tag" id="e1tag">Political Science · Conflict</span>
-        <div class="essay-title" id="e1title">Between<br><em>annihilation</em><br>and agreement</div>
-        <p class="essay-desc" id="e1desc">Sri Lanka and Nepal — two civil wars, two radically different endings. A structural explanation in three acts.</p>
-        <a class="essay-btn" id="e1btn" href="#" onclick="showEssay('ep1');return false;">Read essay</a>
-      </div>
-    </div>
-
-    <!-- 03 ESSAY 02 -->
-    <div class="slide e2-slide s-essay" id="sl2">
-      <div class="essay-bnum e2-num" id="e2num">02</div>
-      <div class="essay-content">
-        <span class="essay-tag" id="e2tag">Development Theory</span>
-        <div class="essay-title" id="e2title">Two lenses,<br><em>one</em> problem</div>
-        <p class="essay-desc" id="e2desc">Modernization vs. dependency — not a debate to win, but a tension to hold.</p>
-        <a class="essay-btn" id="e2btn" href="#" onclick="showEssay('ep2');return false;">Read essay</a>
-      </div>
-    </div>
-
-    <!-- 04 CV -->
-    <div class="slide s-cv" id="sl3">
-      <div class="cv-photos">
-        <div class="cv-photo-track">
-          <img src="photos/DSC04670.jpg" alt="">
-          <img src="photos/DSC04638.jpg" alt="">
-          <img src="photos/DSC04668.jpg" alt="">
-          <img src="photos/DSC04636.jpg" alt="">
-          <img src="photos/DSC04652.jpg" alt="">
-          <img src="photos/DSC04649.jpg" alt="">
-          <img src="photos/DSC04670.jpg" alt="">
-          <img src="photos/DSC04638.jpg" alt="">
-          <img src="photos/DSC04668.jpg" alt="">
-          <img src="photos/DSC04636.jpg" alt="">
-          <img src="photos/DSC04652.jpg" alt="">
-          <img src="photos/DSC04649.jpg" alt="">
-        </div>
-      </div>
-      <div class="cv-content">
-        <span class="cv-tag" id="cvTag">Curriculum Vitae</span>
-        <div class="cv-title" id="cvTitle">Building<br><em>bridges</em><br>across worlds.</div>
-        <div class="cv-section" id="cvEd">
-          <span class="cv-section-label">Education</span>
-          <div class="cv-items">
-            <div class="cv-item">
-              <div class="cv-item-title">McGill University</div>
-              <div class="cv-item-sub">B.A. International Development Studies · Political Science · Management <em>— in progress, exp. 2029</em></div>
-            </div>
-            <div class="cv-item">
-              <div class="cv-item-title">Dawson College</div>
-              <div class="cv-item-sub">DEC, Computer Technology <em>— 2022–2025</em></div>
-            </div>
-          </div>
-        </div>
-        <div class="cv-section" id="cvExp">
-          <span class="cv-section-label">Experience</span>
-          <div class="cv-items">
-            <div class="cv-item">
-              <div class="cv-item-title">Head Coach — Real Madrid Foundation</div>
-              <div class="cv-item-sub">Soccer camps · Montréal, Ottawa, Toronto, Kitchener <em>· 2023–2025</em></div>
-            </div>
-            <div class="cv-item">
-              <div class="cv-item-title">Head Coach — Club de Soccer Boucherville</div>
-              <div class="cv-item-sub">Youth coaching, ages 7–12 <em>· 2024–2025</em></div>
-            </div>
-            <div class="cv-item">
-              <div class="cv-item-title">Sales Advisor — Best Buy Canada</div>
-              <div class="cv-item-sub">Electronics & technology, Brossard (Dix30) <em>· Summer 2023</em></div>
-            </div>
-            <div class="cv-item">
-              <div class="cv-item-title">Air Cadet — Escadron 898</div>
-              <div class="cv-item-sub">Royal Canadian Air Cadets · <em>Rita Deschênes Trophy · 2019–2022</em></div>
-            </div>
-          </div>
-        </div>
-        <div class="cv-two">
-          <div class="cv-section" id="cvLang" style="margin-bottom:0;">
-            <span class="cv-section-label">Languages</span>
-            <div class="lang-list">
-              <div class="lang-badge">Português<span>native</span></div>
-              <div class="lang-badge">English<span>fluent</span></div>
-              <div class="lang-badge">Français<span>fluent</span></div>
-              <div class="lang-badge">Español<span>advanced</span></div>
-            </div>
-          </div>
-          <div class="cv-section" id="cvSkills" style="margin-bottom:0;">
-            <span class="cv-section-label">Skills</span>
-            <div class="skill-list">
-              <div class="skill-tag">Leadership</div>
-              <div class="skill-tag">Multilingual comm.</div>
-              <div class="skill-tag">Team management</div>
-              <div class="skill-tag">Client service</div>
-              <div class="skill-tag">Microsoft Office</div>
-              <div class="skill-tag">Social media</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 05 CONTACT -->
-    <div class="slide s-contact" id="sl4">
-      <div class="contact-lines"></div>
-      <div class="contact-big">
-        <span class="cb cw"><span>Let's talk</span></span>
-        <span class="cb cg"><span>about</span></span>
-        <span class="cb cgold"><span>ideas.</span></span>
-      </div>
-      <a class="contact-email-el" href="mailto:vinicius.bastos@mail.mcgill.ca">vinicius.bastos@mail.mcgill.ca</a>
-      <div class="contact-foot-el">
-        <span class="cfe">Vinicius de Oliveira Bastos · Montréal, 2026</span>
-        <span class="cfe">McGill University</span>
-      </div>
-    </div>
-
   </div>
-</div>
+  <div class="scroll-hint" id="scrollHint">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
-<!-- ESSAY PAGES -->
+<!-- 02 ESSAY 01 -->
+<section id="essay1">
+  <div class="essay-num essay-num-1" id="en1">01</div>
+  <div class="essay-wrap">
+    <span class="essay-tag" id="et1">Political Science · Conflict</span>
+    <div class="essay-title" id="eti1">Between<br><em>annihilation</em><br>and agreement</div>
+    <p class="essay-desc" id="ed1">Sri Lanka and Nepal — two civil wars, two radically different endings. A structural explanation in three acts.</p>
+    <a class="essay-link" id="el1" href="#" onclick="openEssay('ep1');return false;">Read essay</a>
+  </div>
+</section>
+
+<!-- 03 ESSAY 02 -->
+<section id="essay2">
+  <div class="essay-num essay-num-2" id="en2">02</div>
+  <div class="essay-wrap">
+    <span class="essay-tag" id="et2">Development Theory</span>
+    <div class="essay-title" id="eti2">Two lenses,<br><em>one</em> problem</div>
+    <p class="essay-desc" id="ed2">Modernization vs. dependency — not a debate to win, but a tension to hold.</p>
+    <a class="essay-link" id="el2" href="#" onclick="openEssay('ep2');return false;">Read essay</a>
+  </div>
+</section>
+
+<!-- 04 CV -->
+<section id="cv">
+  <div class="cv-photos">
+    <div class="cv-strip" id="cvStrip">
+      <img src="photos/DSC04670.jpg"  alt="">
+      <img src="photos/IMG_3625.JPG"  alt="">
+      <img src="photos/DSC04638.jpg"  alt="">
+      <img src="photos/img1.jpeg"     alt="">
+      <img src="photos/DSC04668.jpg"  alt="">
+      <img src="photos/IMG_3626.JPG"  alt="">
+      <img src="photos/DSC04649.jpg"  alt="">
+      <img src="photos/DSC04652.jpg"  alt="">
+      <img src="photos/IMG_3624.JPG"  alt="">
+      <!-- duplicate for seamless parallax -->
+      <img src="photos/DSC04670.jpg"  alt="">
+      <img src="photos/IMG_3625.JPG"  alt="">
+      <img src="photos/DSC04638.jpg"  alt="">
+      <img src="photos/img1.jpeg"     alt="">
+      <img src="photos/DSC04668.jpg"  alt="">
+    </div>
+  </div>
+  <div class="cv-body">
+    <span class="cv-eyebrow" id="cvEye">Curriculum Vitae</span>
+    <div class="cv-headline" id="cvHead">Building<br><em>bridges</em><br>across worlds.</div>
+
+    <div class="cv-block" id="cvEd">
+      <span class="cv-label">Education</span>
+      <div class="cv-rows">
+        <div>
+          <div class="cv-row-title">McGill University</div>
+          <div class="cv-row-sub">B.A. International Development Studies · Political Science · Management <em>— in progress, exp. 2029</em></div>
+        </div>
+        <div>
+          <div class="cv-row-title">Dawson College</div>
+          <div class="cv-row-sub">DEC, Computer Technology <em>— 2022–2025</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-block" id="cvExp">
+      <span class="cv-label">Experience</span>
+      <div class="cv-rows">
+        <div>
+          <div class="cv-row-title">Head Coach — Real Madrid Foundation</div>
+          <div class="cv-row-sub">Soccer camps · Montréal, Ottawa, Toronto, Kitchener <em>· 2023–2025</em></div>
+        </div>
+        <div>
+          <div class="cv-row-title">Head Coach — Club de Soccer Boucherville</div>
+          <div class="cv-row-sub">Youth coaching, ages 7–12 <em>· 2024–2025</em></div>
+        </div>
+        <div>
+          <div class="cv-row-title">Sales Advisor — Best Buy Canada</div>
+          <div class="cv-row-sub">Electronics & technology, Brossard (Dix30) <em>· Summer 2023</em></div>
+        </div>
+        <div>
+          <div class="cv-row-title">Air Cadet — Escadron 898</div>
+          <div class="cv-row-sub">Royal Canadian Air Cadets · <em>Rita Deschênes Trophy · 2019–2022</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-grid">
+      <div class="cv-block" id="cvLang" style="margin-bottom:0">
+        <span class="cv-label">Languages</span>
+        <div class="lang-chips">
+          <div class="chip-lang">Português<span>native</span></div>
+          <div class="chip-lang">English<span>fluent</span></div>
+          <div class="chip-lang">Français<span>fluent</span></div>
+          <div class="chip-lang">Español<span>advanced</span></div>
+        </div>
+      </div>
+      <div class="cv-block" id="cvSkl" style="margin-bottom:0">
+        <span class="cv-label">Skills</span>
+        <div class="skill-chips">
+          <div class="chip-skill">Leadership</div>
+          <div class="chip-skill">Multilingual comm.</div>
+          <div class="chip-skill">Team management</div>
+          <div class="chip-skill">Client service</div>
+          <div class="chip-skill">Microsoft Office</div>
+          <div class="chip-skill">Social media</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONTACT -->
+<section id="contact">
+  <div class="contact-lines"></div>
+  <div>
+    <span class="contact-word cw1"><span>Let's talk</span></span>
+    <span class="contact-word cw2"><span>about</span></span>
+    <span class="contact-word cw3"><span>ideas.</span></span>
+  </div>
+  <a class="contact-email" id="cEmail" href="mailto:vinicius.bastos@mail.mcgill.ca">vinicius.bastos@mail.mcgill.ca</a>
+  <div class="contact-foot" id="cFoot">
+    <span>Vinicius de Oliveira Bastos · Montréal, 2026</span>
+    <span>McGill University</span>
+  </div>
+</section>
+
+<!-- ESSAY OVERLAYS -->
 <div class="essay-page" id="ep1">
   <div class="ep-inner">
-    <button class="ep-back" onclick="hideEssay()">Back to site</button>
-    <div class="ep-header">
+    <button class="ep-back" onclick="closeEssay()">Back to site</button>
+    <div class="ep-hdr">
       <span class="ep-tag">Political Science · Conflict</span>
       <h1 class="ep-title">Between annihilation and agreement:<br>Civil war termination in Sri Lanka and Nepal</h1>
       <span class="ep-meta">Written during my first year at McGill University, April 2026</span>
     </div>
     <div class="ep-body">
-      <p>In May 2009, the Sri Lankan army announced the death of the leader of the Liberation Tigers of Tamil Eelam, Velupillai Prabhakaran, ending twenty-six years of civil war in a total military victory. Three years earlier, the Nepalese government and the Communist Party of Nepal signed a comprehensive peace agreement that ended ten years of insurgency entirely through negotiation. Two Asian conflicts, two radically distinct closures. Why would one war end with annihilation while the other end with political peace?</p>
+      <p>In May 2009, the Sri Lankan army announced the death of Velupillai Prabhakaran, leader of the Liberation Tigers of Tamil Eelam, ending twenty-six years of civil war in a total military victory. Three years earlier, the Nepalese government and the Communist Party of Nepal signed a comprehensive peace agreement that ended ten years of insurgency entirely through negotiation. Two Asian conflicts, two radically distinct closures. Why would one war end with annihilation while the other end with political peace?</p>
       <p>This essay argues that the divergent outcomes reflect the interaction of three core factors: the ethnic versus ideological nature of each dispute, the military balance that produced a growing asymmetry in one case and a prolonged impasse in the other, and the internal political forces that closed or opened space for negotiation.</p>
       <h2>I. The nature of the conflict</h2>
       <p>The nature of a civil war — whether rooted in ethnic identities or ideological objectives — largely shapes whether an agreement is viable. Ethnic civil wars generate specific dynamics that make agreements fragile: disputes are often territorially indivisible, violence reactivates group identities, and recruitment occurs within communities, eliminating appeals that cross boundaries.</p>
-      <p>In Sri Lanka, these dynamics were highly evident. The conflict was, from its beginning, an identity struggle between the Sinhalese majority and the Tamil minority. The Liberation Tigers of Tamil Eelam embodied this logic — the creation of a Tamil separatist and independent state. Any compromise short of independence amounted to a betrayal of the movement's founding purpose.</p>
+      <p>In Sri Lanka, these dynamics were highly evident. The conflict was, from its beginning, an identity struggle between the Sinhalese majority and the Tamil minority. The LTTE embodied this logic — the creation of a Tamil separatist and independent state. Any compromise short of independence amounted to a betrayal of the movement's founding purpose.</p>
       <p>Nepal's conflict, by contrast, did not have ethnicity as its main driver. The Communist Party of Nepal (Maoist) was founded with a class-based ideological program. Ideological wars are almost always fought for control over an existing state, which makes them more amenable to solutions that distribute power within a unified structure.</p>
       <h2>II. Military balance and the logic of stalemate</h2>
       <p>In Nepal, the conflict created precisely the kind of stalemate that conflict scholars link to negotiated agreements. Neither side could win decisively. This deadlock made negotiation rationally attractive for both sides.</p>
@@ -355,8 +387,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content
 
 <div class="essay-page" id="ep2">
   <div class="ep-inner">
-    <button class="ep-back" onclick="hideEssay()">Back to site</button>
-    <div class="ep-header">
+    <button class="ep-back" onclick="closeEssay()">Back to site</button>
+    <div class="ep-hdr">
       <span class="ep-tag">Development Theory</span>
       <h1 class="ep-title">Two lenses, one problem:<br>Modernization and dependency theory</h1>
       <span class="ep-meta">Written during my first year at McGill University, February 2026</span>
@@ -374,265 +406,114 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-const TOTAL     = 5;
-const slider    = document.getElementById('slider');
-const wrap      = document.getElementById('slidesWrap');
-const progFill  = document.getElementById('progFill');
-const navCtr    = document.getElementById('navCtr');
-const dotsEl    = document.getElementById('dotsEl');
+gsap.registerPlugin(ScrollTrigger);
 
-slider.style.height = (TOTAL * 100) + 'vh';
-
-/* ── STATE ── */
-let current  = 0;
-let settling = false;
-let revealed = new Set();
-
-/* ── DOTS ── */
-const dotEls = [];
-for(let i = 0; i < TOTAL; i++){
-  const b = document.createElement('button');
-  b.className = 'dot' + (i === 0 ? ' active' : '');
-  b.setAttribute('aria-label', 'Slide ' + (i + 1));
-  b.addEventListener('click', () => snapTo(i));
-  dotsEl.appendChild(b);
-  dotEls.push(b);
-}
-
-/* ── HELPERS ── */
-function vh(){ return window.innerHeight; }
-function targetY(i){ return -i * vh(); }
-function getCurrentY(){
-  const m = new DOMMatrix(window.getComputedStyle(slider).transform);
-  return m.m42;
-}
-function setY(y){ slider.style.transform = `translateY(${y}px)`; }
-
-/* ── SNAP ── */
-function snapTo(idx, instant){
-  idx = Math.max(0, Math.min(TOTAL - 1, idx));
-  settling = true;
-
-  if(instant){
-    slider.classList.add('instant');
-    setY(targetY(idx));
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => slider.classList.remove('instant'));
-    });
-    finishSnap(idx);
-    return;
-  }
-
-  slider.classList.remove('instant');
-  setY(targetY(idx));
-  clearTimeout(slider._t);
-  slider._t = setTimeout(() => finishSnap(idx), 650);
-}
-
-function finishSnap(idx){
-  if(current !== idx){ resetSlide(current); current = idx; }
-  settling = false;
-  updateUI();
-  if(!revealed.has(idx)){ revealed.add(idx); revealSlide(idx); }
-}
-
-/* ── UI ── */
-function updateUI(){
-  dotEls.forEach((d,i) => d.classList.toggle('active', i === current));
-  navCtr.textContent = String(current+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
-  progFill.style.width = ((current / (TOTAL-1)) * 100) + '%';
-}
-
-/* ── DRAG (pointer events — mouse + touch unified) ── */
-let dragging = false;
-let startY   = 0;
-let startSlY = 0;
-let prevY    = 0;
-let prevT    = 0;
-let vel      = 0;
-
-wrap.addEventListener('pointerdown', e => {
-  if(e.target.closest('a,button')) return;
-  if(settling) return;
-  dragging  = true;
-  startY    = e.clientY;
-  startSlY  = getCurrentY();
-  prevY     = e.clientY;
-  prevT     = Date.now();
-  vel       = 0;
-  slider.classList.add('instant');
-  wrap.setPointerCapture(e.pointerId);
+/* ── PROGRESS ── */
+window.addEventListener('scroll', () => {
+  const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('prog').style.width = (p * 100) + '%';
 }, {passive:true});
 
-wrap.addEventListener('pointermove', e => {
-  if(!dragging) return;
-  const now = Date.now();
-  const dt  = Math.max(now - prevT, 1);
-  vel       = (e.clientY - prevY) / dt;
-  prevY     = e.clientY;
-  prevT     = now;
-
-  const delta = e.clientY - startY;
-  let   newY  = startSlY + delta;
-  const minY  = targetY(TOTAL - 1);
-  const maxY  = 0;
-  if(newY > maxY) newY = maxY + (newY - maxY) * 0.16;
-  if(newY < minY) newY = minY + (newY - minY) * 0.16;
-  setY(newY);
-}, {passive:true});
-
-function endDrag(){
-  if(!dragging) return;
-  dragging = false;
-
-  const y = getCurrentY();
-  const h = vh();
-  let nearest = Math.round(-y / h);
-  nearest = Math.max(0, Math.min(TOTAL-1, nearest));
-
-  const FLICK = 0.35; /* px/ms */
-  if(vel >  FLICK) nearest = Math.max(0, nearest - 1);
-  if(vel < -FLICK) nearest = Math.min(TOTAL-1, nearest + 1);
-
-  snapTo(nearest);
-}
-
-wrap.addEventListener('pointerup',     endDrag, {passive:true});
-wrap.addEventListener('pointercancel', endDrag, {passive:true});
-
-/* ── WHEEL ── */
-let wheelAcc = 0;
-let wheelTmr = null;
-wrap.addEventListener('wheel', e => {
-  e.preventDefault();
-  if(settling) return;
-  wheelAcc += e.deltaY;
-  clearTimeout(wheelTmr);
-  wheelTmr = setTimeout(() => {
-    if(Math.abs(wheelAcc) > vh() * 0.12){
-      snapTo(current + (wheelAcc > 0 ? 1 : -1));
-    }
-    wheelAcc = 0;
-  }, 80);
-}, {passive:false});
-
-/* ── KEYBOARD ── */
-window.addEventListener('keydown', e => {
-  if(settling) return;
-  if(['ArrowDown','ArrowRight',' '].includes(e.key)){ e.preventDefault(); snapTo(current+1); }
-  if(['ArrowUp','ArrowLeft'].includes(e.key)){ e.preventDefault(); snapTo(current-1); }
+/* ── NAV INDEX ── */
+[['hero','01'],['essay1','02'],['essay2','03'],['cv','04'],['contact','05']].forEach(([id,label]) => {
+  ScrollTrigger.create({
+    trigger:'#'+id, start:'top 50%', end:'bottom 50%',
+    onEnter:()=>{ navIdx.textContent=label; },
+    onEnterBack:()=>{ navIdx.textContent=label; },
+  });
 });
+const navIdx = document.getElementById('navIdx');
 
-/* ── RESIZE ── */
-window.addEventListener('resize', () => {
-  slider.style.height = (TOTAL * 100) + 'vh';
-  snapTo(current, true);
+/* ── HERO PARALLAX ── */
+gsap.to('#heroBg', {
+  yPercent:-28, ease:'none',
+  scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}
 });
+gsap.to('.h-l1 span', {y:-50,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+gsap.to('.h-l2 span', {y:-80,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+gsap.to('.h-l3 span', {y:-110,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+gsap.to(['#heroSub','#heroLangs'],{opacity:0,y:-36,ease:'none',scrollTrigger:{trigger:'#hero',start:'25% top',end:'65% top',scrub:true}});
 
-/* ── REVEAL ── */
-function revealSlide(i){
-  const tl = gsap.timeline();
-  if(i===0){
-    tl.to('.hl1 span',{y:'0%',duration:.75,ease:'power3.out'},0)
-      .to('.hl2 span',{y:'0%',duration:.75,ease:'power3.out'},.1)
-      .to('.hl3 span',{y:'0%',duration:.75,ease:'power3.out'},.2)
-      .to('.hero-sub',{autoAlpha:1,duration:.5},.48)
-      .to('.hero-langs',{autoAlpha:1,duration:.4},.62)
-      .to('.hero-hint',{autoAlpha:1,duration:.4},.82);
-    return;
-  }
-  if(i===1){
-    tl.to('#e1num',{autoAlpha:1,duration:.4},0)
-      .to('#e1tag',{autoAlpha:1,y:0,duration:.45,ease:'power3.out'},.1)
-      .to('#e1title',{autoAlpha:1,y:0,duration:.6,ease:'power3.out'},.22)
-      .to('#e1desc',{autoAlpha:1,y:0,duration:.5,ease:'power2.out'},.45)
-      .to('#e1btn',{autoAlpha:1,y:0,duration:.4,ease:'power2.out'},.65);
-    gsap.to('#e1num',{y:-36,duration:2.2,ease:'sine.inOut',yoyo:true,repeat:-1});
-    return;
-  }
-  if(i===2){
-    tl.to('#e2num',{autoAlpha:1,duration:.4},0)
-      .to('#e2tag',{autoAlpha:1,y:0,duration:.45,ease:'power3.out'},.1)
-      .to('#e2title',{autoAlpha:1,y:0,duration:.6,ease:'power3.out'},.22)
-      .to('#e2desc',{autoAlpha:1,y:0,duration:.5,ease:'power2.out'},.45)
-      .to('#e2btn',{autoAlpha:1,y:0,duration:.4,ease:'power2.out'},.65);
-    gsap.to('#e2num',{y:36,duration:2.5,ease:'sine.inOut',yoyo:true,repeat:-1});
-    return;
-  }
-  if(i===3){
-    tl.to('#cvTag',{autoAlpha:1,y:0,duration:.4,ease:'power3.out'},0)
-      .to('#cvTitle',{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},.1)
-      .to('#cvEd',{autoAlpha:1,y:0,duration:.5,ease:'power2.out'},.3)
-      .to('#cvExp',{autoAlpha:1,y:0,duration:.5,ease:'power2.out'},.44)
-      .to('#cvLang',{autoAlpha:1,y:0,duration:.45,ease:'power2.out'},.58)
-      .to('#cvSkills',{autoAlpha:1,y:0,duration:.45,ease:'power2.out'},.65);
-    return;
-  }
-  if(i===4){
-    tl.to('.cw span',{y:'0%',duration:.7,ease:'power3.out'},0)
-      .to('.cg span',{y:'0%',duration:.7,ease:'power3.out'},.12)
-      .to('.cgold span',{y:'0%',duration:.7,ease:'power3.out'},.24)
-      .to('.contact-email-el',{autoAlpha:1,duration:.45},.55)
-      .to('.contact-foot-el',{autoAlpha:1,duration:.45},.7);
-  }
-}
+/* ── ESSAY 1 ── */
+gsap.fromTo('#en1',{yPercent:18,opacity:0},{yPercent:-18,opacity:1,ease:'none',
+  scrollTrigger:{trigger:'#essay1',start:'top bottom',end:'bottom top',scrub:true}});
+gsap.timeline({scrollTrigger:{trigger:'#essay1',start:'top 75%',toggleActions:'play none none reverse'}})
+  .to('#et1', {opacity:1,y:0,duration:.5,ease:'power3.out'})
+  .to('#eti1',{opacity:1,y:0,duration:.7,ease:'power3.out'},.12)
+  .to('#ed1', {opacity:1,y:0,duration:.55,ease:'power2.out'},.35)
+  .to('#el1', {opacity:1,y:0,duration:.4,ease:'power2.out'},.55);
 
-function resetSlide(i){
-  if(i===0){
-    gsap.set(['.hl1 span','.hl2 span','.hl3 span'],{y:'110%'});
-    gsap.set(['.hero-sub','.hero-langs','.hero-hint'],{autoAlpha:0});
-    revealed.delete(0); return;
-  }
-  if(i===1){
-    gsap.killTweensOf('#e1num');
-    gsap.set(['#e1num','#e1tag','#e1title','#e1desc','#e1btn'],{autoAlpha:0,y:20});
-    gsap.set('#e1num',{y:0}); revealed.delete(1); return;
-  }
-  if(i===2){
-    gsap.killTweensOf('#e2num');
-    gsap.set(['#e2num','#e2tag','#e2title','#e2desc','#e2btn'],{autoAlpha:0,y:20});
-    gsap.set('#e2num',{y:0}); revealed.delete(2); return;
-  }
-  if(i===3){
-    gsap.set(['#cvTag','#cvTitle','#cvEd','#cvExp','#cvLang','#cvSkills'],{autoAlpha:0,y:16});
-    revealed.delete(3); return;
-  }
-  if(i===4){
-    gsap.set(['.cw span','.cg span','.cgold span'],{y:'110%'});
-    gsap.set(['.contact-email-el','.contact-foot-el'],{autoAlpha:0});
-    revealed.delete(4);
-  }
-}
+/* ── ESSAY 2 ── */
+gsap.fromTo('#en2',{yPercent:18,opacity:0},{yPercent:-18,opacity:1,ease:'none',
+  scrollTrigger:{trigger:'#essay2',start:'top bottom',end:'bottom top',scrub:true}});
+gsap.timeline({scrollTrigger:{trigger:'#essay2',start:'top 75%',toggleActions:'play none none reverse'}})
+  .to('#et2', {opacity:1,y:0,duration:.5,ease:'power3.out'})
+  .to('#eti2',{opacity:1,y:0,duration:.7,ease:'power3.out'},.12)
+  .to('#ed2', {opacity:1,y:0,duration:.55,ease:'power2.out'},.35)
+  .to('#el2', {opacity:1,y:0,duration:.4,ease:'power2.out'},.55);
 
-/* ── ESSAYS ── */
-function showEssay(id){
-  document.getElementById(id).classList.add('active');
-  document.getElementById(id).scrollTop = 0;
-}
-function hideEssay(){
-  document.querySelectorAll('.essay-page').forEach(p => p.classList.remove('active'));
-}
+/* ── CV photo strip parallax ── */
+gsap.to('#cvStrip',{
+  yPercent:-30,ease:'none',
+  scrollTrigger:{trigger:'#cv',start:'top bottom',end:'bottom top',scrub:true}
+});
+gsap.timeline({scrollTrigger:{trigger:'#cv',start:'top 70%',toggleActions:'play none none reverse'}})
+  .to('#cvEye', {opacity:1,y:0,duration:.4,ease:'power3.out'})
+  .to('#cvHead',{opacity:1,y:0,duration:.65,ease:'power3.out'},.1)
+  .to('#cvEd',  {opacity:1,y:0,duration:.5,ease:'power2.out'},.3)
+  .to('#cvExp', {opacity:1,y:0,duration:.5,ease:'power2.out'},.44)
+  .to('#cvLang',{opacity:1,y:0,duration:.4,ease:'power2.out'},.58)
+  .to('#cvSkl', {opacity:1,y:0,duration:.4,ease:'power2.out'},.65);
 
-/* ── BOOT ── */
+/* ── CONTACT words scrub up as you arrive ── */
+gsap.fromTo(['.cw1 span','.cw2 span','.cw3 span'],
+  {y:'110%'},
+  {y:'0%',ease:'none',stagger:.06,
+   scrollTrigger:{trigger:'#contact',start:'top 85%',end:'top 25%',scrub:.5}}
+);
+gsap.to('#cEmail',{opacity:1,duration:.5,scrollTrigger:{trigger:'#contact',start:'top 55%',toggleActions:'play none none reverse'}});
+gsap.to('#cFoot', {opacity:1,duration:.5,delay:.15,scrollTrigger:{trigger:'#contact',start:'top 55%',toggleActions:'play none none reverse'}});
+
+/* ── LOADER + HERO BOOT ── */
 window.addEventListener('load', () => {
-  setY(0);
-  updateUI();
   gsap.timeline({
     onComplete(){
-      gsap.to('#loader',{autoAlpha:0,duration:.55,ease:'power2.inOut',
+      gsap.to('#loader',{autoAlpha:0,duration:.5,ease:'power2.inOut',
         onComplete(){
           document.getElementById('loader').style.display='none';
-          revealed.add(0);
-          revealSlide(0);
+          bootHero();
         }
       });
     }
   })
-  .to('#ldrTxt',{y:'0%',duration:.65,ease:'power3.out'},.2)
-  .to('#ldrBar',{width:'100%',duration:.85,ease:'power2.inOut'},.3)
-  .to('#ldrTxt',{autoAlpha:0,duration:.3,ease:'power2.in'},1.4);
+  .to('#ldTxt',{y:'0%',duration:.65,ease:'power3.out'},.2)
+  .to('#ldBar',{width:'100%',duration:.85,ease:'power2.inOut'},.3)
+  .to('#ldTxt',{autoAlpha:0,duration:.3,ease:'power2.in'},1.4);
 });
+
+function bootHero(){
+  gsap.timeline()
+    .to('.h-l1 span',{y:'0%',duration:.8,ease:'power3.out'},0)
+    .to('.h-l2 span',{y:'0%',duration:.8,ease:'power3.out'},.1)
+    .to('.h-l3 span',{y:'0%',duration:.8,ease:'power3.out'},.2)
+    .to('#heroSub',  {autoAlpha:1,duration:.55},.5)
+    .to('#heroLangs',{autoAlpha:1,duration:.4},.65)
+    .to('#scrollHint',{autoAlpha:1,duration:.4},.9);
+  ScrollTrigger.refresh();
+}
+
+/* ── ESSAYS ── */
+function openEssay(id){
+  document.getElementById(id).classList.add('open');
+  document.getElementById(id).scrollTop=0;
+  document.body.style.overflow='hidden';
+}
+function closeEssay(){
+  document.querySelectorAll('.essay-page').forEach(p=>p.classList.remove('open'));
+  document.body.style.overflow='';
+}
 </script>
 </body>
 </html>
