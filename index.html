@@ -15,11 +15,35 @@
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:auto;}
-body{background:var(--ink);color:var(--cream);font-family:var(--ff-b);overflow-x:hidden;}
+
+/* ── SCROLL CONTAINER ──
+   The entire page is one tall scrollable column.
+   scroll-snap makes each section fill the viewport and snap into place.
+   The browser handles all the snap physics natively — smooth on all devices.
+*/
+html{
+  scroll-snap-type:y mandatory;
+  overflow-y:scroll;
+  height:100%;
+}
+body{
+  background:var(--ink);color:var(--cream);
+  font-family:var(--ff-b);overflow-x:hidden;
+  height:100%;
+}
+
+/* Every section snaps to the viewport */
+section{
+  scroll-snap-align:start;
+  scroll-snap-stop:always;   /* prevents fast-scroll jumping multiple slides */
+  position:relative;
+  overflow:hidden;
+  height:100vh;
+  height:100dvh;
+}
 
 /* ── PROGRESS ── */
-#prog{position:fixed;top:0;left:0;height:1px;width:0%;background:var(--gold);z-index:900;transition:width .1s linear;}
+#prog{position:fixed;top:0;left:0;height:1px;width:0%;background:var(--gold);z-index:900;}
 
 /* ── NAV ── */
 nav{
@@ -30,27 +54,36 @@ nav{
 .nav-logo{font-family:var(--ff-d);font-size:11px;font-weight:700;color:var(--cream);letter-spacing:.06em;}
 .nav-idx{font-size:9px;letter-spacing:.2em;color:rgba(244,239,230,.35);}
 
+/* ── SIDE DOTS ── */
+.dots{
+  position:fixed;right:24px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:10px;z-index:800;
+}
+.dot{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(244,239,230,.2);border:none;padding:0;
+  cursor:pointer;transition:background .3s,transform .3s;
+}
+.dot.active{background:var(--cream);transform:scale(1.7);}
+
 /* ── NOISE ── */
 body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:700;opacity:.35;
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:700;opacity:.32;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
 }
 
-section{position:relative;overflow:hidden;}
-
-/* ════════════════════
+/* ════════════════════════════
    01  HERO
-════════════════════ */
+════════════════════════════ */
 #hero{
-  height:100vh;min-height:580px;
-  display:flex;align-items:center;justify-content:center;
   background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
 }
 .hero-bg-letter{
   position:absolute;font-family:var(--ff-d);font-weight:900;font-style:italic;
   font-size:clamp(260px,38vw,520px);line-height:1;
   color:rgba(244,239,230,.018);user-select:none;pointer-events:none;
-  top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;will-change:transform;
+  top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;
 }
 .hero-inner{text-align:center;position:relative;z-index:2;padding:0 24px;}
 .h-line{display:block;overflow:hidden;line-height:.9;}
@@ -58,7 +91,10 @@ section{position:relative;overflow:hidden;}
 .h-l1 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;color:var(--cream);}
 .h-l2 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;font-style:italic;color:var(--green);}
 .h-l3 span{font-family:var(--ff-d);font-size:clamp(48px,10vw,128px);font-weight:900;color:var(--gold);}
-.hero-sub{font-family:var(--ff-d);font-size:clamp(13px,1.4vw,17px);font-style:italic;color:var(--muted);margin-top:32px;line-height:1.7;opacity:0;}
+.hero-sub{
+  font-family:var(--ff-d);font-size:clamp(13px,1.4vw,17px);
+  font-style:italic;color:var(--muted);margin-top:32px;line-height:1.7;opacity:0;
+}
 .hero-langs{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap;opacity:0;}
 .lp{font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:4px 11px;border:.5px solid rgba(244,239,230,.18);color:var(--muted);}
 .scroll-hint{
@@ -66,141 +102,220 @@ section{position:relative;overflow:hidden;}
   display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;
 }
 .scroll-hint span{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,239,230,.2);}
-.scroll-line{width:.5px;height:44px;background:linear-gradient(var(--gold),transparent);animation:sp 1.8s ease-in-out infinite;}
-@keyframes sp{0%,100%{opacity:.25;transform:scaleY(.5);transform-origin:top;}50%{opacity:1;transform:scaleY(1);transform-origin:top;}}
-
-/* ════════════════════
-   02  CV
-════════════════════ */
-#cv{
-  min-height:100vh;background:var(--ink);
-  display:flex;align-items:stretch;position:relative;
+.scroll-line{
+  width:.5px;height:44px;
+  background:linear-gradient(var(--gold),transparent);
+  animation:sp 1.8s ease-in-out infinite;
+}
+@keyframes sp{
+  0%,100%{opacity:.25;transform:scaleY(.5);transform-origin:top;}
+  50%{opacity:1;transform:scaleY(1);transform-origin:top;}
 }
 
-/* Desktop photo strip */
+/* ════════════════════════════
+   02  CV
+════════════════════════════ */
+#cv{
+  background:var(--ink);
+  display:flex;align-items:stretch;
+}
+
+/* Photo strip — desktop only, auto-scrolling via CSS animation */
 .cv-photos{
   position:absolute;right:0;top:0;bottom:0;width:44%;overflow:hidden;
 }
 .cv-photos::before{
   content:'';position:absolute;inset:0;z-index:2;
-  background:linear-gradient(to right,var(--ink) 0%,rgba(26,26,24,.5) 50%,transparent 100%);
+  background:linear-gradient(to right,var(--ink) 0%,rgba(26,26,24,.5) 52%,transparent 100%);
 }
-.cv-strip{display:flex;flex-direction:column;will-change:transform;}
 
-/* Individual photo positions to avoid face cropping */
-.cv-strip img{width:100%;height:38vh;object-fit:cover;display:block;flex-shrink:0;}
-.cv-strip img.pos-top    {object-position:center top;}
-.cv-strip img.pos-center {object-position:center center;}
-.cv-strip img.pos-40     {object-position:center 40%;}
-.cv-strip img.pos-30     {object-position:center 30%;}
-
-/* Mobile hero photo — shown only on mobile */
-.cv-mobile-photo{
-  display:none;
-  width:100%;height:52vw;max-height:280px;
-  object-fit:cover;object-position:center 30%;
-  filter:brightness(.7);
+/* The strip is twice as tall as needed; animation scrolls it up by 50% then loops */
+.cv-strip{
+  display:flex;flex-direction:column;
+  animation:stripScroll 18s linear infinite;
 }
+@keyframes stripScroll{
+  0%  { transform:translateY(0); }
+  100%{ transform:translateY(-50%); }
+}
+.cv-strip img{
+  width:100%;
+  height:calc(100vh / 2.5);  /* ~2.5 photos visible at once */
+  object-fit:cover;
+  display:block;flex-shrink:0;
+}
+/* Per-photo face positioning */
+.cv-strip img.p-top    { object-position:center top; }
+.cv-strip img.p-center { object-position:center center; }
+.cv-strip img.p-30     { object-position:center 30%; }
+.cv-strip img.p-40     { object-position:center 40%; }
 
 .cv-body{
   position:relative;z-index:3;
-  padding:clamp(80px,11vh,120px) 52px clamp(60px,8vh,90px);
-  width:58%;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(80px,10vh,110px) 52px clamp(60px,7vh,80px);
+  width:58%;
+  display:flex;flex-direction:column;justify-content:center;
 }
-.cv-eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block;opacity:0;transform:translateY(20px);}
-.cv-headline{font-family:var(--ff-d);font-size:clamp(28px,3.8vw,52px);font-weight:900;line-height:.9;color:var(--cream);margin-bottom:32px;opacity:0;transform:translateY(28px);}
+.cv-eyebrow{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:18px;display:block;
+  opacity:0;transform:translateY(20px);
+}
+.cv-headline{
+  font-family:var(--ff-d);font-size:clamp(28px,3.6vw,50px);
+  font-weight:900;line-height:.9;color:var(--cream);
+  margin-bottom:28px;opacity:0;transform:translateY(28px);
+}
 .cv-headline em{font-style:italic;color:var(--green);}
-.cv-block{margin-bottom:20px;opacity:0;transform:translateY(18px);}
-.cv-label{font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:var(--pale);margin-bottom:8px;display:block;border-bottom:.5px solid rgba(244,239,230,.07);padding-bottom:5px;}
-.cv-rows{display:flex;flex-direction:column;gap:7px;}
-.cv-row-title{font-family:var(--ff-d);font-size:clamp(12px,1.15vw,15px);font-weight:700;color:var(--cream);line-height:1.2;}
-.cv-row-sub{font-size:clamp(10px,.9vw,12px);color:var(--muted);line-height:1.5;}
+.cv-block{margin-bottom:18px;opacity:0;transform:translateY(18px);}
+.cv-label{
+  font-size:8px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--pale);margin-bottom:8px;display:block;
+  border-bottom:.5px solid rgba(244,239,230,.07);padding-bottom:5px;
+}
+.cv-rows{display:flex;flex-direction:column;gap:6px;}
+.cv-row-title{
+  font-family:var(--ff-d);font-size:clamp(12px,1.1vw,14px);
+  font-weight:700;color:var(--cream);line-height:1.2;
+}
+.cv-row-sub{font-size:clamp(10px,.88vw,12px);color:var(--muted);line-height:1.5;}
 .cv-row-sub em{font-style:italic;color:var(--pale);}
-.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .lang-chips,.skill-chips{display:flex;flex-wrap:wrap;gap:5px;}
-.chip-lang{font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:.5px solid rgba(244,239,230,.16);color:var(--muted);line-height:1.7;}
+.chip-lang{
+  font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border:.5px solid rgba(244,239,230,.16);
+  color:var(--muted);line-height:1.7;
+}
 .chip-lang span{color:rgba(244,239,230,.24);margin-left:3px;}
-.chip-skill{font-size:8px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;background:rgba(27,77,62,.2);border:.5px solid rgba(27,77,62,.44);color:rgba(159,191,159,.75);}
+.chip-skill{
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 7px;background:rgba(27,77,62,.2);
+  border:.5px solid rgba(27,77,62,.44);color:rgba(159,191,159,.75);
+}
 
-/* ════════════════════
+/* ════════════════════════════
    03  ESSAY 01
-════════════════════ */
+════════════════════════════ */
 #essay1{
-  min-height:100vh;background:var(--ink);
-  display:flex;align-items:center;
-  padding:clamp(80px,12vh,140px) 8%;
+  background:var(--ink);
+  display:flex;align-items:center;padding:0 8%;
 }
 
-/* ════════════════════
+/* ════════════════════════════
    04  ESSAY 02
-════════════════════ */
+════════════════════════════ */
 #essay2{
-  min-height:100vh;background:var(--sand);color:var(--ink);
-  display:flex;align-items:center;
-  padding:clamp(80px,12vh,140px) 8%;
+  background:var(--sand);color:var(--ink);
+  display:flex;align-items:center;padding:0 8%;
 }
 
-/* shared essay styles */
+/* shared essay */
 .essay-wrap{position:relative;z-index:2;max-width:640px;}
 .essay-num{
   position:absolute;font-family:var(--ff-d);font-weight:900;font-style:italic;
   font-size:clamp(130px,20vw,260px);line-height:1;
-  user-select:none;pointer-events:none;will-change:transform;
+  user-select:none;pointer-events:none;
 }
 .essay-num-1{right:-3%;bottom:-10%;color:rgba(244,239,230,.04);}
-.essay-num-2{left:-3%;top:-8%;color:rgba(26,26,24,.05);}
-.essay-tag{font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;display:block;transform:translateY(32px);opacity:0;}
+.essay-num-2{left:-3%;top:-8%; color:rgba(26,26,24,.05);}
+.essay-tag{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:20px;display:block;
+  opacity:0;transform:translateY(32px);
+}
 #essay1 .essay-tag{color:var(--green);}
 #essay2 .essay-tag{color:var(--green);}
-.essay-title{font-family:var(--ff-d);font-weight:700;line-height:.9;margin-bottom:20px;transform:translateY(40px);opacity:0;}
+.essay-title{
+  font-family:var(--ff-d);font-weight:700;line-height:.9;
+  margin-bottom:20px;opacity:0;transform:translateY(40px);
+}
 .essay-title em{font-style:italic;}
 #essay1 .essay-title{font-size:clamp(32px,6vw,78px);color:var(--cream);}
 #essay1 .essay-title em{color:var(--gold);}
 #essay2 .essay-title{font-size:clamp(32px,6vw,78px);color:var(--ink);}
 #essay2 .essay-title em{color:var(--green);}
-.essay-desc{font-size:clamp(13px,1.3vw,16px);line-height:1.8;margin-bottom:28px;transform:translateY(24px);opacity:0;}
+.essay-desc{
+  font-size:clamp(13px,1.3vw,16px);line-height:1.8;
+  margin-bottom:28px;opacity:0;transform:translateY(24px);
+}
 #essay1 .essay-desc{color:rgba(244,239,230,.4);}
 #essay2 .essay-desc{color:rgba(26,26,24,.46);}
 .essay-link{
   display:inline-flex;align-items:center;gap:10px;
   font-size:9px;letter-spacing:.18em;text-transform:uppercase;
   border-bottom:.5px solid currentColor;padding-bottom:2px;
-  text-decoration:none;transform:translateY(20px);opacity:0;
+  text-decoration:none;opacity:0;transform:translateY(20px);
 }
 .essay-link::after{content:'→';font-size:14px;}
 #essay1 .essay-link{color:rgba(244,239,230,.5);}
 #essay2 .essay-link{color:rgba(26,26,24,.5);}
 
-/* ════════════════════
+/* ════════════════════════════
    05  CONTACT
-════════════════════ */
+════════════════════════════ */
 #contact{
-  min-height:100vh;background:var(--ink);
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
-  padding:0 52px;position:relative;overflow:hidden;
+  background:var(--ink);
+  display:flex;flex-direction:column;
+  align-items:flex-start;justify-content:center;
+  padding:0 52px;
 }
-.contact-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 64px,rgba(244,239,230,.012) 64px,rgba(244,239,230,.012) 65px);pointer-events:none;}
-.contact-word{display:block;overflow:hidden;font-family:var(--ff-d);font-weight:900;font-size:clamp(44px,9.5vw,124px);line-height:.86;}
+.contact-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 64px,rgba(244,239,230,.012) 64px,rgba(244,239,230,.012) 65px);
+}
+.contact-word{
+  display:block;overflow:hidden;
+  font-family:var(--ff-d);font-weight:900;
+  font-size:clamp(44px,9.5vw,124px);line-height:.86;
+}
 .contact-word span{display:block;transform:translateY(110%);}
 .cw1 span{color:var(--cream);}
 .cw2 span{color:var(--green);font-style:italic;}
 .cw3 span{color:var(--gold);}
-.contact-email{display:block;margin-top:52px;font-size:clamp(13px,1.5vw,16px);color:rgba(159,191,159,.8);text-decoration:none;border-bottom:.5px solid rgba(27,77,62,.4);padding-bottom:3px;opacity:0;transition:color .25s;}
+.contact-email{
+  display:block;margin-top:52px;
+  font-size:clamp(13px,1.5vw,16px);
+  color:rgba(159,191,159,.8);text-decoration:none;
+  border-bottom:.5px solid rgba(27,77,62,.4);padding-bottom:3px;
+  opacity:0;transition:color .25s;
+}
 .contact-email:hover{color:#9FD4BA;}
-.contact-foot{position:absolute;bottom:28px;left:52px;right:52px;display:flex;justify-content:space-between;border-top:.5px solid rgba(255,255,255,.05);padding-top:14px;opacity:0;}
+.contact-foot{
+  position:absolute;bottom:28px;left:52px;right:52px;
+  display:flex;justify-content:space-between;
+  border-top:.5px solid rgba(255,255,255,.05);padding-top:14px;
+  opacity:0;
+}
 .contact-foot span{font-size:9px;color:rgba(255,255,255,.12);letter-spacing:.07em;}
 
 /* ── LOADER ── */
-#loader{position:fixed;inset:0;z-index:9000;background:var(--ink);display:flex;align-items:center;justify-content:center;}
-.ld-name{font-family:var(--ff-d);font-size:clamp(28px,4vw,52px);font-weight:700;font-style:italic;color:var(--cream);overflow:hidden;}
+#loader{
+  position:fixed;inset:0;z-index:9000;background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+}
+.ld-name{
+  font-family:var(--ff-d);font-size:clamp(28px,4vw,52px);
+  font-weight:700;font-style:italic;color:var(--cream);overflow:hidden;
+}
 .ld-name span{display:block;transform:translateY(110%);}
 .ld-bar{position:absolute;bottom:0;left:0;height:1px;background:var(--gold);width:0%;}
 
 /* ── ESSAY OVERLAY ── */
-.essay-page{display:none;position:fixed;inset:0;overflow-y:auto;z-index:800;background:var(--cream);color:var(--ink);padding:100px 0 80px;}
+.essay-page{
+  display:none;position:fixed;inset:0;overflow-y:auto;
+  z-index:800;background:var(--cream);color:var(--ink);
+  padding:100px 0 80px;
+}
 .essay-page.open{display:block;}
 .ep-inner{max-width:680px;margin:0 auto;padding:0 32px;}
-.ep-back{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:none;border:none;margin-bottom:48px;cursor:pointer;transition:color .2s;font-family:var(--ff-b);}
+.ep-back{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);background:none;border:none;
+  margin-bottom:48px;cursor:pointer;transition:color .2s;
+  font-family:var(--ff-b);
+}
 .ep-back:hover{color:var(--ink);}
 .ep-back::before{content:'←';font-size:13px;}
 .ep-hdr{border-bottom:.5px solid rgba(26,26,24,.1);padding-bottom:28px;margin-bottom:40px;text-align:center;}
@@ -212,16 +327,14 @@ section{position:relative;overflow:hidden;}
 .ep-body h2{font-family:var(--ff-d);font-size:21px;font-weight:700;color:var(--ink);margin:40px 0 16px;}
 .ep-body blockquote{border-left:2px solid var(--green);padding:14px 22px;background:var(--sand);margin:28px 0;font-style:italic;color:var(--muted);line-height:1.8;}
 
-/* ════════════════════
-   RESPONSIVE
-════════════════════ */
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
   nav{padding:18px 22px;}
-  #cv .cv-photos{display:none;}
-  #cv .cv-mobile-photo{display:block;}
-  #cv .cv-body{width:100%;padding:32px 22px 60px;}
+  .dots{right:10px;}
+  #cv .cv-photos{display:none;}           /* no photos on mobile */
+  #cv .cv-body{width:100%;padding:72px 22px 52px;}
   .cv-grid{grid-template-columns:1fr;}
-  #essay1,#essay2{padding:clamp(72px,10vh,110px) 6%;}
+  #essay1,#essay2{padding:0 6%;}
   #contact{padding:0 22px;}
   .contact-email,.contact-foot{left:22px;right:22px;}
   .ep-inner{padding:0 20px;}
@@ -245,9 +358,11 @@ section{position:relative;overflow:hidden;}
   <span class="nav-idx" id="navIdx">01</span>
 </nav>
 
+<div class="dots" id="dotsEl"></div>
+
 <!-- 01 HERO -->
 <section id="hero">
-  <div class="hero-bg-letter" id="heroBg">V</div>
+  <div class="hero-bg-letter">V</div>
   <div class="hero-inner">
     <span class="h-line h-l1"><span>Vinicius</span></span>
     <span class="h-line h-l2"><span>de Oliveira</span></span>
@@ -266,37 +381,33 @@ section{position:relative;overflow:hidden;}
 
 <!-- 02 CV -->
 <section id="cv">
-  <!-- Desktop: scrolling photo strip -->
   <div class="cv-photos">
-    <div class="cv-strip" id="cvStrip">
-      <!-- object-position tuned per photo to keep face visible -->
-      <img src="photos/DSC04670.jpg" class="pos-center" alt="">
-      <img src="photos/DSC04638.jpg" class="pos-top"    alt="">
-      <img src="photos/DSC04649.jpg" class="pos-center" alt="">
-      <img src="photos/DSC04652.jpg" class="pos-30"     alt="">
-      <img src="photos/IMG_3625.JPG" class="pos-top"    alt="">
-      <img src="photos/IMG_3626.JPG" class="pos-top"    alt="">
-      <!-- img1.jpeg (troféu): face is high, use top -->
-      <img src="photos/img1.jpeg"    class="pos-top"    alt="">
-      <!-- DSC04668 (looking right): face is centre-left -->
-      <img src="photos/DSC04668.jpg" class="pos-40"     alt="">
-      <img src="photos/IMG_3624.JPG" class="pos-center" alt="">
-      <!-- duplicate set for seamless loop -->
-      <img src="photos/DSC04670.jpg" class="pos-center" alt="">
-      <img src="photos/DSC04638.jpg" class="pos-top"    alt="">
-      <img src="photos/DSC04649.jpg" class="pos-center" alt="">
-      <img src="photos/DSC04652.jpg" class="pos-30"     alt="">
-      <img src="photos/IMG_3625.JPG" class="pos-top"    alt="">
+    <div class="cv-strip">
+      <!-- set 1 -->
+      <img src="photos/DSC04670.jpg" class="p-center" alt="">
+      <img src="photos/DSC04638.jpg" class="p-top"    alt="">
+      <img src="photos/DSC04649.jpg" class="p-center" alt="">
+      <img src="photos/DSC04652.jpg" class="p-30"     alt="">
+      <img src="photos/IMG_3625.JPG" class="p-top"    alt="">
+      <img src="photos/img1.jpeg"    class="p-top"    alt="">
+      <img src="photos/DSC04668.jpg" class="p-40"     alt="">
+      <img src="photos/IMG_3626.JPG" class="p-top"    alt="">
+      <img src="photos/IMG_3624.JPG" class="p-center" alt="">
+      <!-- set 2 — exact duplicate for seamless CSS loop -->
+      <img src="photos/DSC04670.jpg" class="p-center" alt="">
+      <img src="photos/DSC04638.jpg" class="p-top"    alt="">
+      <img src="photos/DSC04649.jpg" class="p-center" alt="">
+      <img src="photos/DSC04652.jpg" class="p-30"     alt="">
+      <img src="photos/IMG_3625.JPG" class="p-top"    alt="">
+      <img src="photos/img1.jpeg"    class="p-top"    alt="">
+      <img src="photos/DSC04668.jpg" class="p-40"     alt="">
+      <img src="photos/IMG_3626.JPG" class="p-top"    alt="">
+      <img src="photos/IMG_3624.JPG" class="p-center" alt="">
     </div>
   </div>
-
-  <!-- Mobile: single banner photo (no face crop) -->
-  <img class="cv-mobile-photo" src="photos/DSC04652.jpg" alt="Vinicius coaching">
-
   <div class="cv-body">
     <span class="cv-eyebrow" id="cvEye">Curriculum Vitae</span>
     <div class="cv-headline" id="cvHead">Building<br><em>bridges</em><br>across worlds.</div>
-
     <div class="cv-block" id="cvEd">
       <span class="cv-label">Education</span>
       <div class="cv-rows">
@@ -310,7 +421,6 @@ section{position:relative;overflow:hidden;}
         </div>
       </div>
     </div>
-
     <div class="cv-block" id="cvExp">
       <span class="cv-label">Experience</span>
       <div class="cv-rows">
@@ -332,7 +442,6 @@ section{position:relative;overflow:hidden;}
         </div>
       </div>
     </div>
-
     <div class="cv-grid">
       <div class="cv-block" id="cvLang" style="margin-bottom:0">
         <span class="cv-label">Languages</span>
@@ -447,99 +556,110 @@ section{position:relative;overflow:hidden;}
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── PROGRESS ── */
-window.addEventListener('scroll', () => {
-  const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-  document.getElementById('prog').style.width = (p * 100) + '%';
-}, {passive:true});
+/* ════════════════════════════
+   SECTIONS & DOTS
+════════════════════════════ */
+const SECTIONS = ['hero','cv','essay1','essay2','contact'];
+const LABELS   = ['01','02','03','04','05'];
+const navIdx   = document.getElementById('navIdx');
+const dotsEl   = document.getElementById('dotsEl');
 
-/* ── NAV INDEX ── */
-const navIdx = document.getElementById('navIdx');
-[['hero','01'],['cv','02'],['essay1','03'],['essay2','04'],['contact','05']].forEach(([id,label]) => {
-  ScrollTrigger.create({
-    trigger:'#'+id, start:'top 50%', end:'bottom 50%',
-    onEnter:     () => { navIdx.textContent = label; },
-    onEnterBack: () => { navIdx.textContent = label; },
+/* build dots */
+const dotEls = SECTIONS.map((id, i) => {
+  const b = document.createElement('button');
+  b.className = 'dot' + (i === 0 ? ' active' : '');
+  b.setAttribute('aria-label', 'Go to section ' + LABELS[i]);
+  b.addEventListener('click', () => {
+    document.getElementById(id).scrollIntoView({behavior:'smooth'});
   });
+  dotsEl.appendChild(b);
+  return b;
 });
 
-/* ── HERO PARALLAX ── */
-gsap.to('#heroBg', {
-  yPercent:-28, ease:'none',
-  scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1}
-});
-gsap.to('.h-l1 span', {y:-50, ease:'none', scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1}});
-gsap.to('.h-l2 span', {y:-80, ease:'none', scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1}});
-gsap.to('.h-l3 span', {y:-110,ease:'none', scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1}});
-gsap.to(['#heroSub','#heroLangs'], {
-  opacity:0, y:-36, ease:'none',
-  scrollTrigger:{trigger:'#hero', start:'25% top', end:'65% top', scrub:1}
-});
+/* ════════════════════════════
+   PROGRESS + NAV INDEX via IntersectionObserver
+   (works perfectly with CSS scroll-snap — no ScrollTrigger needed for UI)
+════════════════════════════ */
+const sectionEls = SECTIONS.map(id => document.getElementById(id));
 
-/* ── CV photo strip parallax ── */
-gsap.to('#cvStrip', {
-  yPercent:-25, ease:'none',
-  scrollTrigger:{trigger:'#cv', start:'top bottom', end:'bottom top', scrub:1}
-});
+const ioNav = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const i = sectionEls.indexOf(entry.target);
+      if(i < 0) return;
+      navIdx.textContent = LABELS[i];
+      dotEls.forEach((d, j) => d.classList.toggle('active', j === i));
+      /* progress */
+      document.getElementById('prog').style.width = ((i / (SECTIONS.length - 1)) * 100) + '%';
+      /* trigger reveal animation for this section */
+      revealSection(SECTIONS[i]);
+    }
+  });
+}, { threshold: 0.5 });
 
-/* CV text reveal — use a generous start so it fires well before centre on mobile */
-const cvTl = gsap.timeline({
-  scrollTrigger:{
-    trigger:'#cv', start:'top 80%',
-    toggleActions:'play none none reverse'
+sectionEls.forEach(el => ioNav.observe(el));
+
+/* ════════════════════════════
+   REVEAL ANIMATIONS  (GSAP, fire once per section)
+════════════════════════════ */
+const revealed = new Set();
+
+function revealSection(id){
+  if(revealed.has(id)) return;
+  revealed.add(id);
+
+  if(id === 'hero') return; /* hero is revealed by bootHero() */
+
+  if(id === 'cv'){
+    gsap.timeline()
+      .to('#cvEye', {opacity:1, y:0, duration:.45, ease:'power3.out'})
+      .to('#cvHead',{opacity:1, y:0, duration:.65, ease:'power3.out'}, .1)
+      .to('#cvEd',  {opacity:1, y:0, duration:.5,  ease:'power2.out'}, .28)
+      .to('#cvExp', {opacity:1, y:0, duration:.5,  ease:'power2.out'}, .42)
+      .to('#cvLang',{opacity:1, y:0, duration:.4,  ease:'power2.out'}, .56)
+      .to('#cvSkl', {opacity:1, y:0, duration:.4,  ease:'power2.out'}, .63);
+    return;
   }
-});
-cvTl.to('#cvEye', {opacity:1, y:0, duration:.4, ease:'power3.out'})
-    .to('#cvHead',{opacity:1, y:0, duration:.65,ease:'power3.out'}, .1)
-    .to('#cvEd',  {opacity:1, y:0, duration:.5, ease:'power2.out'}, .28)
-    .to('#cvExp', {opacity:1, y:0, duration:.5, ease:'power2.out'}, .42)
-    .to('#cvLang',{opacity:1, y:0, duration:.4, ease:'power2.out'}, .56)
-    .to('#cvSkl', {opacity:1, y:0, duration:.4, ease:'power2.out'}, .63);
 
-/* ── ESSAY 1 ── */
-gsap.fromTo('#en1',
-  {yPercent:18, opacity:0},
-  {yPercent:-18, opacity:1, ease:'none',
-   scrollTrigger:{trigger:'#essay1', start:'top bottom', end:'bottom top', scrub:1}}
-);
-gsap.timeline({
-  scrollTrigger:{trigger:'#essay1', start:'top 80%', toggleActions:'play none none reverse'}
-})
-.to('#et1', {opacity:1, y:0, duration:.5, ease:'power3.out'})
-.to('#eti1',{opacity:1, y:0, duration:.7, ease:'power3.out'}, .12)
-.to('#ed1', {opacity:1, y:0, duration:.55,ease:'power2.out'}, .35)
-.to('#el1', {opacity:1, y:0, duration:.4, ease:'power2.out'}, .55);
+  if(id === 'essay1'){
+    gsap.timeline()
+      .to('#en1', {opacity:1, duration:.5, ease:'power2.out'})
+      .to('#et1', {opacity:1, y:0, duration:.45, ease:'power3.out'}, .1)
+      .to('#eti1',{opacity:1, y:0, duration:.65, ease:'power3.out'}, .22)
+      .to('#ed1', {opacity:1, y:0, duration:.5,  ease:'power2.out'}, .44)
+      .to('#el1', {opacity:1, y:0, duration:.4,  ease:'power2.out'}, .62);
+    return;
+  }
 
-/* ── ESSAY 2 ── */
-gsap.fromTo('#en2',
-  {yPercent:18, opacity:0},
-  {yPercent:-18, opacity:1, ease:'none',
-   scrollTrigger:{trigger:'#essay2', start:'top bottom', end:'bottom top', scrub:1}}
-);
-gsap.timeline({
-  scrollTrigger:{trigger:'#essay2', start:'top 80%', toggleActions:'play none none reverse'}
-})
-.to('#et2', {opacity:1, y:0, duration:.5, ease:'power3.out'})
-.to('#eti2',{opacity:1, y:0, duration:.7, ease:'power3.out'}, .12)
-.to('#ed2', {opacity:1, y:0, duration:.55,ease:'power2.out'}, .35)
-.to('#el2', {opacity:1, y:0, duration:.4, ease:'power2.out'}, .55);
+  if(id === 'essay2'){
+    gsap.timeline()
+      .to('#en2', {opacity:1, duration:.5, ease:'power2.out'})
+      .to('#et2', {opacity:1, y:0, duration:.45, ease:'power3.out'}, .1)
+      .to('#eti2',{opacity:1, y:0, duration:.65, ease:'power3.out'}, .22)
+      .to('#ed2', {opacity:1, y:0, duration:.5,  ease:'power2.out'}, .44)
+      .to('#el2', {opacity:1, y:0, duration:.4,  ease:'power2.out'}, .62);
+    return;
+  }
 
-/* ── CONTACT ── */
-gsap.fromTo(['.cw1 span','.cw2 span','.cw3 span'],
-  {y:'110%'},
-  {y:'0%', ease:'none', stagger:.06,
-   scrollTrigger:{trigger:'#contact', start:'top 85%', end:'top 25%', scrub:.5}}
-);
-gsap.to('#cEmail',{opacity:1, duration:.5,
-  scrollTrigger:{trigger:'#contact', start:'top 60%', toggleActions:'play none none reverse'}});
-gsap.to('#cFoot', {opacity:1, duration:.5, delay:.15,
-  scrollTrigger:{trigger:'#contact', start:'top 60%', toggleActions:'play none none reverse'}});
+  if(id === 'contact'){
+    gsap.timeline()
+      .to('.cw1 span',{y:'0%', duration:.7, ease:'power3.out'}, 0)
+      .to('.cw2 span',{y:'0%', duration:.7, ease:'power3.out'}, .1)
+      .to('.cw3 span',{y:'0%', duration:.7, ease:'power3.out'}, .2)
+      .to('#cEmail',  {opacity:1, duration:.45}, .5)
+      .to('#cFoot',   {opacity:1, duration:.45}, .62);
+    return;
+  }
+}
 
-/* ── LOADER + BOOT ── */
+/* ════════════════════════════
+   LOADER + HERO BOOT
+════════════════════════════ */
 window.addEventListener('load', () => {
   gsap.timeline({
     onComplete(){
-      gsap.to('#loader',{autoAlpha:0, duration:.5, ease:'power2.inOut',
+      gsap.to('#loader',{
+        autoAlpha:0, duration:.5, ease:'power2.inOut',
         onComplete(){
           document.getElementById('loader').style.display = 'none';
           bootHero();
@@ -547,31 +667,41 @@ window.addEventListener('load', () => {
       });
     }
   })
-  .to('#ldTxt',{y:'0%',   duration:.65, ease:'power3.out'}, .2)
-  .to('#ldBar',{width:'100%', duration:.85, ease:'power2.inOut'}, .3)
+  .to('#ldTxt',{y:'0%',      duration:.65, ease:'power3.out'}, .2)
+  .to('#ldBar',{width:'100%',duration:.85, ease:'power2.inOut'}, .3)
   .to('#ldTxt',{autoAlpha:0, duration:.3,  ease:'power2.in'}, 1.4);
 });
 
 function bootHero(){
+  revealed.add('hero');
   gsap.timeline()
     .to('.h-l1 span',{y:'0%', duration:.8, ease:'power3.out'}, 0)
     .to('.h-l2 span',{y:'0%', duration:.8, ease:'power3.out'}, .1)
     .to('.h-l3 span',{y:'0%', duration:.8, ease:'power3.out'}, .2)
     .to('#heroSub',  {autoAlpha:1, duration:.55}, .5)
     .to('#heroLangs',{autoAlpha:1, duration:.4},  .65)
-    .to('#scrollHint',{autoAlpha:1, duration:.4}, .9);
-  ScrollTrigger.refresh();
+    .to('#scrollHint',{autoAlpha:1,duration:.4},  .9);
 }
 
-/* ── ESSAYS ── */
+/* ════════════════════════════
+   ESSAY OVERLAYS
+   Temporarily disable scroll-snap while overlay is open
+   so the essay itself can scroll freely
+════════════════════════════ */
 function openEssay(id){
   document.getElementById(id).classList.add('open');
   document.getElementById(id).scrollTop = 0;
+  /* pause snap so the overlay can scroll */
+  document.documentElement.style.scrollSnapType = 'none';
   document.body.style.overflow = 'hidden';
 }
 function closeEssay(){
   document.querySelectorAll('.essay-page').forEach(p => p.classList.remove('open'));
   document.body.style.overflow = '';
+  /* restore snap after a tick so the page doesn't jump */
+  requestAnimationFrame(() => {
+    document.documentElement.style.scrollSnapType = 'y mandatory';
+  });
 }
 </script>
 </body>
